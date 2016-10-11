@@ -1,0 +1,140 @@
+<script type="text/x-red" data-template-name="ramp-thermostat">
+    <div class="form-row">
+        <label for="node-input-profile"><i class="fa fa-line-chart"></i> Profile</label>
+        <input type="text" id="node-input-profile">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="ramp-thermostat">
+    <p>A node that emulates a thermostat.</p>
+    <p>The ramp-thermostat controls a heating-device such a valve
+    depending on the actual input temperature and the target temperature.</p>
+    <p>The target temperature is defined by a profile that
+    provides the value depending on the current time <code>00:00-24:00</code>.
+    The profile consists of several points whose connections build a sequence of lines.
+    The switching moment can be optimized by defing a gradient line like a <code>ramp</code>.</p>
+    <p>The node provides 3 outputs:</p>
+      <ul>
+        <li><code>state (boolean)</code></li>
+        <li><code>actual temperature</code></li>
+        <li><code>target temperature</code></li>
+      </ul>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('ramp-thermostat',{
+        category: 'smart home',
+        color: '#E9967A',
+        defaults: {
+            name: {value:""},
+            profile: {value:"",type:"profile"}
+        },
+        inputs:1,
+        outputs:3,
+        icon: "trigger.png",
+        label: function() {
+            return this.name||"ramp-thermostat";
+        },
+        paletteLabel: 'thermostat'
+    });
+</script>
+
+<script type="text/x-red" data-template-name="profile">
+  <div class="form-row">
+    <label for="node-config-input-name"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-config-input-name">
+  </div>
+  
+  <div>
+    <label style="float:left; margin-bottom:10px"><i class="fa fa-dot-circle-o"></i> Points:</label>
+    <label style="float:left;margin-left:45px;"> Time (hh:mm)&nbsp;&nbsp&nbsp;Temp (°)</label>
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-time1"><i class="fa fa-dot-circle-o"></i> #1</label>
+    <input class="input-append-left" type="text" id="node-config-input-time1" style="width:50px">
+    <input type="text" id="node-config-input-temp1" style="margin-left:45px; width:50px">
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-time2"><i class="fa fa-dot-circle-o"></i> #2</label>
+    <input class="input-append-left" type="text" id="node-config-input-time2" style="width:50px">
+    <input type="text" id="node-config-input-temp2" style="margin-left:45px; width:50px">
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-time3"><i class="fa fa-dot-circle-o"></i> #3</label>
+    <input class="input-append-left" type="text" id="node-config-input-time3" style="width:50px">
+    <input type="text" id="node-config-input-temp3" style="margin-left:45px; width:50px">
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-time4"><i class="fa fa-dot-circle-o"></i> #4</label>
+    <input class="input-append-left" type="text" id="node-config-input-time4" style="width:50px">
+    <input type="text" id="node-config-input-temp4" style="margin-left:45px; width:50px">
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-time5"><i class="fa fa-dot-circle-o"></i> #5</label>
+    <input class="input-append-left" type="text" id="node-config-input-time5" style="width:50px">
+    <input type="text" id="node-config-input-temp5" style="margin-left:45px; width:50px">
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-time6"><i class="fa fa-dot-circle-o"></i> #6</label>
+    <input class="input-append-left" type="text" id="node-config-input-time6" style="width:50px">
+    <input type="text" id="node-config-input-temp6" style="margin-left:45px; width:50px">
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-time7"><i class="fa fa-dot-circle-o"></i> #7</label>
+    <input class="input-append-left" type="text" id="node-config-input-time7" style="width:50px">
+    <input type="text" id="node-config-input-temp7" style="margin-left:45px; width:50px">
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-time8"><i class="fa fa-dot-circle-o"></i> #8</label>
+    <input class="input-append-left" type="text" id="node-config-input-time8" style="width:50px">
+    <input type="text" id="node-config-input-temp8" style="margin-left:45px; width:50px">
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-time9"><i class="fa fa-dot-circle-o"></i> #9</label>
+    <input class="input-append-left" type="text" id="node-config-input-time9" style="width:50px">
+    <input type="text" id="node-config-input-temp9" style="margin-left:45px; width:50px">
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-time10"><i class="fa fa-dot-circle-o"></i> #10</label>
+    <input class="input-append-left" type="text" id="node-config-input-time10" style="width:50px">
+    <input type="text" id="node-config-input-temp10" style="margin-left:45px; width:50px">
+  </div>
+  <div class="form-tips"><span>You can define up to 10 Points. A Profile has at least 2 Points.<br>
+The first Point must start at 00:00 and the last at 24:00.</span></div>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('profile',{
+        category: 'config',
+        defaults: {
+            name: {value:'',required:true},
+            time1: {value:''},
+            temp1: {value:''},
+            time2: {value:''},
+            temp2: {value:''},
+            time3: {value:''},
+            temp3: {value:''},
+            time4: {value:''},
+            temp4: {value:''},
+            time5: {value:''},
+            temp5: {value:''},
+            time6: {value:''},
+            temp6: {value:''},
+            time7: {value:''},
+            temp7: {value:''},
+            time8: {value:''},
+            temp8: {value:''},
+            time9: {value:''},
+            temp9: {value:''},
+            time10: {value:''},
+            temp10: {value:''},
+        },
+        label: function() {
+            return this.name;
+        }
+    });
+</script>

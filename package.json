@@ -1,0 +1,14 @@
+{
+    "name"         : "node-red-contrib-ramp-thermostat",
+    "version"      : "0.1.0",
+    "description"  : "A Node-RED node that emulates a thermostat",
+    "license"      : "ISC",
+    "dependencies" : {
+    },
+    "keywords": [ "node-red" ],
+    "node-red"     : {
+        "nodes": {
+            "ramp-thermostat": "ramp-thermostat/ramp-thermostat.js"
+        }
+    }
+}
