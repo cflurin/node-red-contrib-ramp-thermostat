@@ -46,29 +46,34 @@ module.exports = function(RED) {
       var actual_mins = date.getHours()*60 + date.getMinutes();
 
       for (var k in this.profile.points) {
-          point_mins = parseInt(k);
-          //node.warn("mins " + point_mins + " temp " + this.profile.points[k]);
-          point_target = parseFloat(this.profile.points[k]);
-          
-          if (actual_mins < point_mins) {
-              gradient = (point_target - pre_target) / (point_mins - pre_mins);
-              target = pre_target + (gradient * (actual_mins - pre_mins));
-              target = target.toFixed(1);
-              //node.warn(gradient + " target " + target);
-              break;
-          }
-          pre_mins = point_mins;
-          pre_target = point_target;
+        point_mins = parseInt(k);
+        //node.warn("mins " + point_mins + " temp " + this.profile.points[k]);
+        
+        point_target = parseFloat(this.profile.points[k]);
+        
+        if (actual_mins < point_mins) {
+          gradient = (point_target - pre_target) / (point_mins - pre_mins);
+          target = pre_target + (gradient * (actual_mins - pre_mins));
+          target = target.toFixed(1);
+          //node.warn("k=" + k +" gradient " + gradient + " target " + target);               
+          break;
+        }
+        pre_mins = point_mins;
+        pre_target = point_target;
       }
+      
+      if(isNaN(target)) {
+        node.warn("target undefined, check your profile.");
+      } 
 
       //node.warn("actual "+msg.payload+" target "+target);
       
       if (msg.payload < target) {
-          msg1.payload = true;
-          this.status({fill:"yellow",shape:"dot",text:msg.payload+" < "+target+" ("+this.profile.name+")"});
+        msg1.payload = true;
+        this.status({fill:"yellow",shape:"dot",text:msg.payload+" < "+target+" ("+this.profile.name+")"});
       } else {
-          msg1.payload = false;
-          this.status({fill:"grey",shape:"ring",text:msg.payload+" > "+target+" ("+this.profile.name+")"});
+        msg1.payload = false;
+        this.status({fill:"grey",shape:"ring",text:msg.payload+" > "+target+" ("+this.profile.name+")"});
       }
       
       msg2.payload = msg.payload;
