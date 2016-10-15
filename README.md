@@ -24,6 +24,8 @@ Define a profile which consists of up to 10 Points.
 A Profile has at least 2 Points and should typically start at 00:00 and end at 24:00.
 The target temperature is calculated depending on the actual time.
 
+### Examples
+
 ![ramp-thermostat2](https://cloud.githubusercontent.com/assets/5056710/19309043/eb5b9bea-9082-11e6-995b-fb254b7d71e5.jpeg)
 
 ![ramp-thermostat1](https://cloud.githubusercontent.com/assets/5056710/19308860/0f76f35e-9082-11e6-8fa8-c1014cd3f142.jpg)

@@ -28,14 +28,20 @@ module.exports = function(RED) {
   RED.nodes.registerType("profile",Profile);
   
   function RampThermostat(config) {
-    RED.nodes.createNode(this,config);
-    var node = this;
+    RED.nodes.createNode(this, config);
        
+    this.config = config;
+    
     this.profile = RED.nodes.getNode(config.profile);
-    //node.warn(JSON.stringify(this.profile.points));
+    //this.warn(JSON.stringify(this.profile.points));
+    
+    var globalContext = this.context().global;
+    globalContext.set(this.profile.name, config.profile);
     
     this.on('input', function(msg) {
     
+      //this.warn(JSON.stringify(this.config.profile));
+      
       var msg1 = {"topic":"state"};
       var msg2 = {"topic":"actual"};
       var msg3 = {"topic":"target"};
@@ -44,43 +50,57 @@ module.exports = function(RED) {
       
       var date = new Date();
       var actual_mins = date.getHours()*60 + date.getMinutes();
-
-      for (var k in this.profile.points) {
-        point_mins = parseInt(k);
-        //node.warn("mins " + point_mins + " temp " + this.profile.points[k]);
-        
-        point_target = parseFloat(this.profile.points[k]);
-        
-        if (actual_mins < point_mins) {
-          gradient = (point_target - pre_target) / (point_mins - pre_mins);
-          target = pre_target + (gradient * (actual_mins - pre_mins));
-          target = target.toFixed(1);
-          //node.warn("k=" + k +" gradient " + gradient + " target " + target);               
-          break;
+      
+      if (typeof msg.profile !== "undefined") {
+        var profileId = globalContext.get(msg.profile);
+        if (typeof profileId === "undefined") {
+          this.warn(msg.profile+" not found!");
+          this.status({fill:"red",shape:"dot",text:msg.profile+" not found!"});
+        } else {
+          this.profile = RED.nodes.getNode(profileId);
+          this.status({fill:"green",shape:"dot",text:"profile = "+this.profile.name});
         }
-        pre_mins = point_mins;
-        pre_target = point_target;
       }
-      
-      if(isNaN(target)) {
-        node.warn("target undefined, check your profile.");
-      } 
-
-      //node.warn("actual "+msg.payload+" target "+target);
-      
-      if (msg.payload < target) {
-        msg1.payload = true;
-        this.status({fill:"yellow",shape:"dot",text:msg.payload+" < "+target+" ("+this.profile.name+")"});
-      } else {
-        msg1.payload = false;
-        this.status({fill:"grey",shape:"ring",text:msg.payload+" > "+target+" ("+this.profile.name+")"});
-      }
-      
-      msg2.payload = msg.payload;
-      msg3.payload = target;
-      
-      node.send([msg1, msg2, msg3]);
     
+      //this.warn("name " + this.profile.name + " points " + JSON.stringify(this.profile.points));
+
+      if (typeof msg.payload !== "undefined") {
+        for (var k in this.profile.points) {
+          point_mins = parseInt(k);
+          //this.warn("mins " + point_mins + " temp " + this.profile.points[k]);
+          
+          point_target = parseFloat(this.profile.points[k]);
+          
+          if (actual_mins < point_mins) {
+            gradient = (point_target - pre_target) / (point_mins - pre_mins);
+            target = pre_target + (gradient * (actual_mins - pre_mins));
+            target = target.toFixed(1);
+            //this.warn("k=" + k +" gradient " + gradient + " target " + target);               
+            break;
+          }
+          pre_mins = point_mins;
+          pre_target = point_target;
+        }
+        
+        if(isNaN(target)) {
+          this.warn("target undefined, check your profile.");
+        } 
+
+        //this.warn("actual "+msg.payload+" target "+target);
+        
+        if (msg.payload < target) {
+          msg1.payload = true;
+          this.status({fill:"yellow",shape:"dot",text:msg.payload+" < "+target+" ("+this.profile.name+")"});
+        } else {
+          msg1.payload = false;
+          this.status({fill:"grey",shape:"ring",text:msg.payload+" > "+target+" ("+this.profile.name+")"});
+        }
+        
+        msg2.payload = msg.payload;
+        msg3.payload = target;
+        
+        this.send([msg1, msg2, msg3]);
+      }
     });
   }
   RED.nodes.registerType("ramp-thermostat",RampThermostat);
