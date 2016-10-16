@@ -39,3 +39,14 @@ return msg1;
 ![ramp-thermostat2](https://cloud.githubusercontent.com/assets/5056710/19309043/eb5b9bea-9082-11e6-995b-fb254b7d71e5.jpeg)
 
 ![ramp-thermostat1](https://cloud.githubusercontent.com/assets/5056710/19308860/0f76f35e-9082-11e6-8fa8-c1014cd3f142.jpg)
+
+The profile is defined using 8 points:
+
+time   | temp
+-------|-------
+00:00 | 18.0
+03:00 | 18.0
+06:00 | 20.5
+18:00 | 20.5
+20:00 | 18.0
+24:00| 18.0
