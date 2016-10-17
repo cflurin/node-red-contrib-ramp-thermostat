@@ -10,9 +10,14 @@ module.exports = function(RED) {
   
   function RampThermostat(config) {
     RED.nodes.createNode(this, config);
-           
-    var profile = RED.nodes.getNode(config.profile);
-    //this.points = getPoints(this.profile.n);
+
+    var globalContext = this.context().global;
+    var profile = globalContext.get("profile");
+    
+    if (typeof profile === "undefined") {
+      profile = RED.nodes.getNode(config.profile);
+      globalContext.set("profile", profile);
+    }
     
     
     this.on('input', function(msg) {
@@ -45,16 +50,17 @@ module.exports = function(RED) {
           case "setTarget":
             result = setTarget(msg.payload);
             profile = result.profile;
+            globalContext.set("profile", profile);
             break;
           
           case "setProfile":
             result = setProfile(msg.payload);
             profile = result.profile;
+            globalContext.set("profile", profile);
             
             if (!result.found) {
               this.warn(msg.payload+" not found!");
             }
-                  
             break;
             
           default:
