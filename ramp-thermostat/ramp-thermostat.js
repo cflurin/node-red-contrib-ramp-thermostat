@@ -16,6 +16,7 @@ module.exports = function(RED) {
     
     if (typeof profile === "undefined") {
       profile = RED.nodes.getNode(config.profile);
+      profile.points = getPoints(profile.n);
       globalContext.set("profile", profile);
     }
     
@@ -37,7 +38,7 @@ module.exports = function(RED) {
             result = getState(msg.payload, profile);
             
             if(isNaN(result.target)) {
-              this.warn("target undefined, check your profile.");
+              this.warn("target undefined!");
             }
             
             msg1.payload = result.state;
@@ -54,6 +55,7 @@ module.exports = function(RED) {
             break;
           
           case "setProfile":
+            //this.warn(JSON.stringify(msg.payload));
             result = setProfile(msg.payload);
             profile = result.profile;
             globalContext.set("profile", profile);
@@ -89,14 +91,16 @@ module.exports = function(RED) {
     var date = new Date();
     var actual_mins = date.getHours()*60 + date.getMinutes();
     
-    var points = getPoints(profile.n);
+    //var points = getPoints(profile.n);
+    var points = profile.points;
       
     //console.log("name " + profile.name + " points " + JSON.stringify(points));
     for (var k in points) {
       point_mins = parseInt(k);
       //console.log("mins " + point_mins + " temp " + points[k]);
       
-      point_target = parseFloat(points[k]);
+      //point_target = parseFloat(points[k]);
+      point_target = points[k];
       
       if (actual_mins < point_mins) {
         gradient = (point_target - pre_target) / (point_mins - pre_mins);
@@ -133,14 +137,8 @@ module.exports = function(RED) {
     
     if (typeof target === "number") {
       profile.name = "manual";
-      profile.n = {
-          "type": "profile",
-          "name": "manual",
-          "time1": "00:00",
-          "temp1": target,
-          "time2": "24:00",
-          "temp2": target
-        };
+      profile.points = {"0":target, "1440":target};
+      
       valid = true;
       status = {fill:"green",shape:"dot",text:"set target to "+target+" ("+profile.name+")"};
     } else {
@@ -151,29 +149,54 @@ module.exports = function(RED) {
     return {"profile":profile, "status":status, "isValid": valid};
   }
   
-  function setProfile(name) {
+  function setProfile(input) {
     var found = false;
     var status = {};
     var profile = {};
     //var count = 0;
-    
-    RED.nodes.eachNode(function(n) {
-      if (n.type === "profile" && n.name === name) {
-        profile.n = n;
-        profile.name = n.name;
+    var type = typeof input;
+       
+    switch (type) {
+      case "string":
+        RED.nodes.eachNode(function(n) {
+          if (n.type === "profile" && n.name === input) {
+            profile.n = n;
+            profile.name = n.name;
+            profile.points = getPoints(profile.n);
+            found = true;
+          }
+          //count++;
+        });
+          
+        //console.log("count " + count);
+        
+        if (found) {
+          status = {fill:"green",shape:"dot",text:"profile set to "+profile.name};
+        } else {
+          status = {fill:"red",shape:"dot",text:profile.name+" not found!"};
+        }
+        break;
+        
+      case "object":
+        profile.name = input.name || "input profile";
+        var points = {};
+        var arr, minutes;
+        
+        for (var k in input.points) {
+          arr = k.split(":");
+          minutes = parseInt(arr[0])*60 + parseInt(arr[1]);
+          points[minutes] = input.points[k];
+        }
+        profile.points = points;
         found = true;
-      }
-      //count++;
-    });
-  
-    //console.log("count " + count);
-    
-    if (found) {
-      status = {fill:"green",shape:"dot",text:"profile set to "+name};
-    } else {
-      status = {fill:"red",shape:"dot",text:name+" not found!"};
+        status = {fill:"green",shape:"dot",text:"profile set to "+profile.name};
+        //console.log(points);
+        break;
+        
+      default:
+        status = {fill:"red",shape:"dot",text:"invalid type "+type};
     }
-    
+
     return {"profile":profile, "status":status, "found":found};
   }
     
@@ -189,7 +212,7 @@ module.exports = function(RED) {
       if (typeof(n[timei]) !== "undefined" && n[timei] !== "") {
         arr = n[timei].split(":");
         minutes = parseInt(arr[0])*60 + parseInt(arr[1]);
-        points_str += '"' + minutes + '":"' + n[tempi] + '",'; 
+        points_str += '"' + minutes + '":' + n[tempi] + ',';
       }
     }
     points_str = points_str.slice(0,points_str.length-1);

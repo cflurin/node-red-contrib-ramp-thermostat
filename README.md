@@ -44,6 +44,13 @@ msg.payload: profile-name
 
 The profile-name is one of the existing profiles that are configured in the ramp-thermostat node.
 
+You can even define an input profile (JSON):
+
+```sh
+msg.topic: setProfile
+msg.payload: {"name":"myGreatProfile","points":{"00:00":16.0,"08:00":20.0,"20:00":20.0,"24:00":16.0}}
+```
+
 ### Examples
 
 ![ramp-thermostat2](https://cloud.githubusercontent.com/assets/5056710/19309043/eb5b9bea-9082-11e6-995b-fb254b7d71e5.jpeg)
