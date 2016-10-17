@@ -20,19 +20,29 @@ Change directory to your node red installation:
 
 ### Configuration
 
-Define a profile which consists of up to 10 Points.
-A Profile has at least 2 Points and should typically start at 00:00 and end at 24:00.
+Define a profile which consists of up to 10 points.
+A profile has at least 2 points and should typically start at 00:00 and end at 24:00.
 The target temperature is calculated depending on the actual time.
 
-### Runtime Profile Selection
+### Runtime settings
 
-Select the profile (msg.profile) e.g. using a function node wired to the input of ramp-thermostat:
+**setTarget**
 
+```sh
+msg.topic: setTarget
+msg.payload: nn.n (number)
 ```
-var msg1 = {};
-msg1.profile = "standard";
-return msg1;
+
+The target will be valid until a new target or a profile is set again or until node-red is restarted.
+
+**setProfile**
+
+```sh
+msg.topic: setProfile
+msg.payload: profile-name
 ```
+
+The profile-name is one of the existing profiles that are configured in the ramp-thermostat node.
 
 ### Examples
 
@@ -40,7 +50,7 @@ return msg1;
 
 ![ramp-thermostat1](https://cloud.githubusercontent.com/assets/5056710/19308860/0f76f35e-9082-11e6-8fa8-c1014cd3f142.jpg)
 
-The profile is defined using 8 points:
+The profile is defined using 6 points:
 
 time   | temp
 -------|-------
