@@ -10,17 +10,20 @@ module.exports = function(RED) {
   
   function RampThermostat(config) {
     RED.nodes.createNode(this, config);
-
-    var globalContext = this.context().global;
-    var profile = globalContext.get("profile");
     
-    if (typeof profile === "undefined") {
-      profile = RED.nodes.getNode(config.profile);
-      profile.points = getPoints(profile.n);
-      globalContext.set("profile", profile);
+    var globalContext = this.context().global;
+    this.profile = globalContext.get(this.name);
+    
+    if (typeof this.profile === "undefined") {
+      this.profile = RED.nodes.getNode(config.profile);
+      this.profile.points = getPoints(this.profile.n);
+      globalContext.set(this.name, this.profile);
     }
     
-    
+    this.status({fill:"green",shape:"dot",text:"profile set to "+this.profile.name});
+    //this.warn(this.name+" - "+JSON.stringify(this.profile));
+
+
     this.on('input', function(msg) {
       
       var msg1 = {"topic":"state"};
@@ -35,7 +38,7 @@ module.exports = function(RED) {
         switch (msg.topic) {
           case "setActual":
           case "":
-            result = getState(msg.payload, profile);
+            result = getState(msg.payload, this.profile);
             
             if(isNaN(result.target)) {
               this.warn("target undefined!");
@@ -50,15 +53,23 @@ module.exports = function(RED) {
             
           case "setTarget":
             result = setTarget(msg.payload);
-            profile = result.profile;
-            globalContext.set("profile", profile);
+            this.profile = result.profile;
+            globalContext.set(this.name, this.profile);
             break;
           
           case "setProfile":
             //this.warn(JSON.stringify(msg.payload));
             result = setProfile(msg.payload);
-            profile = result.profile;
-            globalContext.set("profile", profile);
+            this.profile = result.profile;
+            
+            if (this.profile.name === "default") {
+              this.profile = RED.nodes.getNode(config.profile);
+              this.profile.points = getPoints(this.profile.n);             
+              //this.warn("default "+this.profile.name);
+              result.status = {fill:"green",shape:"dot",text:"profile set to default ("+this.profile.name+")"};
+            }
+            
+            globalContext.set(this.name, this.profile);
             
             if (!result.found) {
               this.warn(msg.payload+" not found!");
@@ -91,7 +102,6 @@ module.exports = function(RED) {
     var date = new Date();
     var actual_mins = date.getHours()*60 + date.getMinutes();
     
-    //var points = getPoints(profile.n);
     var points = profile.points;
       
     //console.log("name " + profile.name + " points " + JSON.stringify(points));
@@ -99,7 +109,6 @@ module.exports = function(RED) {
       point_mins = parseInt(k);
       //console.log("mins " + point_mins + " temp " + points[k]);
       
-      //point_target = parseFloat(points[k]);
       point_target = points[k];
       
       if (actual_mins < point_mins) {
@@ -158,22 +167,28 @@ module.exports = function(RED) {
        
     switch (type) {
       case "string":
-        RED.nodes.eachNode(function(n) {
-          if (n.type === "profile" && n.name === input) {
-            profile.n = n;
-            profile.name = n.name;
-            profile.points = getPoints(profile.n);
-            found = true;
-          }
-          //count++;
-        });
-          
-        //console.log("count " + count);
-        
-        if (found) {
+        if (input === "default") {
+          profile.name = "default";
           status = {fill:"green",shape:"dot",text:"profile set to "+profile.name};
+          found = true;
         } else {
-          status = {fill:"red",shape:"dot",text:profile.name+" not found!"};
+          RED.nodes.eachNode(function(n) {
+            if (n.type === "profile" && n.name === input) {
+              profile.n = n;
+              profile.name = n.name;
+              profile.points = getPoints(profile.n);
+              found = true;
+            }
+            //count++;
+          });
+            
+          //console.log("count " + count);
+          
+          if (found) {
+            status = {fill:"green",shape:"dot",text:"profile set to "+profile.name};
+          } else {
+            status = {fill:"red",shape:"dot",text:profile.name+" not found!"};
+          }
         }
         break;
         
