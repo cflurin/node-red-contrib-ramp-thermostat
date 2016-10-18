@@ -53,8 +53,10 @@ module.exports = function(RED) {
             
           case "setTarget":
             result = setTarget(msg.payload);
-            this.profile = result.profile;
-            globalContext.set(this.name, this.profile);
+            if (result.isValid) {
+              this.profile = result.profile;
+              globalContext.set(this.name, this.profile);
+            }
             break;
           
           case "setProfile":
