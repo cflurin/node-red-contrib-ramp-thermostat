@@ -62,18 +62,19 @@ module.exports = function(RED) {
           case "setProfile":
             //this.warn(JSON.stringify(msg.payload));
             result = setProfile(msg.payload);
-            this.profile = result.profile;
             
-            if (this.profile.name === "default") {
-              this.profile = RED.nodes.getNode(config.profile);
-              this.profile.points = getPoints(this.profile.n);             
-              //this.warn("default "+this.profile.name);
-              result.status = {fill:"green",shape:"dot",text:"profile set to default ("+this.profile.name+")"};
-            }
-            
-            globalContext.set(this.name, this.profile);
-            
-            if (!result.found) {
+            if (result.found) {
+              this.profile = result.profile;
+              
+              if (this.profile.name === "default") {
+                this.profile = RED.nodes.getNode(config.profile);
+                this.profile.points = getPoints(this.profile.n);             
+                //this.warn("default "+this.profile.name);
+                result.status = {fill:"green",shape:"dot",text:"profile set to default ("+this.profile.name+")"};
+              }
+              
+              globalContext.set(this.name, this.profile);
+            } else {
               this.warn(msg.payload+" not found!");
             }
             break;
@@ -103,15 +104,13 @@ module.exports = function(RED) {
     
     var date = new Date();
     var actual_mins = date.getHours()*60 + date.getMinutes();
-    
-    var points = profile.points;
       
-    //console.log("name " + profile.name + " points " + JSON.stringify(points));
-    for (var k in points) {
+    //console.log("name " + profile.name + " profile.points " + JSON.stringify(profile.points));
+    for (var k in profile.points) {
       point_mins = parseInt(k);
-      //console.log("mins " + point_mins + " temp " + points[k]);
+      //console.log("mins " + point_mins + " temp " + profile.points[k]);
       
-      point_target = points[k];
+      point_target = profile.points[k];
       
       if (actual_mins < point_mins) {
         gradient = (point_target - pre_target) / (point_mins - pre_mins);
@@ -171,7 +170,6 @@ module.exports = function(RED) {
       case "string":
         if (input === "default") {
           profile.name = "default";
-          status = {fill:"green",shape:"dot",text:"profile set to "+profile.name};
           found = true;
         } else {
           RED.nodes.eachNode(function(n) {
