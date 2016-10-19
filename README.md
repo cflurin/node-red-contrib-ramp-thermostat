@@ -1,28 +1,31 @@
-
 ### ramp-thermostat
 A Node-RED contrib-node that emulates a thermostat.
 
-The ramp-thermostat controls a heating-device such a valve depending on the actual input temperature and the target temperature.
-
-The target temperature is defined by a profile that provides the value depending on the current time `00:00-24:00`. The profile consists of several points whose connections build a sequence of lines. The switching moment can be optimized by defining a gradient line like a `ramp`.
-
-The node provides 3 outputs:
-
-* state (boolean)
-* actual temperature
-* target temperature
+The ramp-thermostat controls an actuator depending on the current input temperature and the target temperature (setpoint).
 
 ### Installation
 
-Change directory to your node red installation:
+Run the following command in your Node-RED user directory - typically `~/.node-red`
 
     $ npm install node-red-contrib-ramp-thermostat
 
 ### Configuration
 
-Define a profile which consists of up to 10 points.
+The target temperature is defined by a profile that provides the value depending on the current time `00:00-24:00`. The profile consists of several points whose connections build a sequence of lines. The switching moment can be optimized by defining a gradient line like a `ramp`.
+
 A profile has at least 2 points and should typically start at 00:00 and end at 24:00.
-The target temperature is calculated depending on the actual time.
+
+
+### Usage
+
+This node expects a numeric msg.payload containing the current temperature.
+It will calculate the target temperature depending on msg.payload at the current time and output 3 values:
+
+* state (boolean)
+* current temperature
+* target temperature
+
+The state (true/false) is used to control an actuator. The current and target temperature outputs can be wired e.g. into a ui_chart node.
 
 ### Runtime settings
 

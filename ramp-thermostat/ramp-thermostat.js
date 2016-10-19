@@ -10,24 +10,27 @@ module.exports = function(RED) {
   
   function RampThermostat(config) {
     RED.nodes.createNode(this, config);
-    
+        
+    var node_name = this.name.replace(" ", "_");
     var globalContext = this.context().global;
-    this.profile = globalContext.get(this.name);
     
-    if (typeof this.profile === "undefined") {
+    // experimental
+    //this.profile = globalContext.get(node_name);
+    
+    //if (typeof this.profile === "undefined") {
       this.profile = RED.nodes.getNode(config.profile);
       this.profile.points = getPoints(this.profile.n);
-      globalContext.set(this.name, this.profile);
-    }
+      globalContext.set(node_name, this.profile);
+    //}
     
     this.status({fill:"green",shape:"dot",text:"profile set to "+this.profile.name});
-    //this.warn(this.name+" - "+JSON.stringify(this.profile));
+    //this.warn(node_name+" - "+JSON.stringify(this.profile));
 
 
     this.on('input', function(msg) {
       
       var msg1 = {"topic":"state"};
-      var msg2 = {"topic":"actual"};
+      var msg2 = {"topic":"current"};
       var msg3 = {"topic":"target"};
       
       var result = {};
@@ -36,26 +39,30 @@ module.exports = function(RED) {
       
       if (typeof msg.payload !== "undefined") {      
         switch (msg.topic) {
-          case "setActual":
+          case "setCurrent":
           case "":
-            result = getState(msg.payload, this.profile);
-            
-            if(isNaN(result.target)) {
-              this.warn("target undefined!");
+            if (!isNaN(msg.payload)) {
+              result = getState(msg.payload, this.profile);
+              
+              if(isNaN(result.target)) {
+                this.warn("target undefined");
+              }
+              
+              msg1.payload = result.state;
+              msg2.payload = msg.payload;
+              msg3.payload = result.target;
+              
+              this.send([msg1, msg2, msg3]);
+            } else {
+              node.warn("Non numeric input");
             }
-            
-            msg1.payload = result.state;
-            msg2.payload = msg.payload;
-            msg3.payload = result.target;
-            
-            this.send([msg1, msg2, msg3]);
             break;
             
           case "setTarget":
             result = setTarget(msg.payload);
             if (result.isValid) {
               this.profile = result.profile;
-              globalContext.set(this.name, this.profile);
+              globalContext.set(node_name, this.profile);
             }
             break;
           
@@ -73,17 +80,17 @@ module.exports = function(RED) {
                 result.status = {fill:"green",shape:"dot",text:"profile set to default ("+this.profile.name+")"};
               }
               
-              globalContext.set(this.name, this.profile);
+              globalContext.set(node_name, this.profile);
             } else {
-              this.warn(msg.payload+" not found!");
+              this.warn(msg.payload+" not found");
             }
             break;
             
           default:
-            this.warn("invalid topic!");
+            this.warn("invalid topic");
         }
       } else {
-        this.warn("msg.payload undefined.");
+        this.warn("msg.payload undefined");
       }
       
       this.status(result.status);
@@ -96,14 +103,14 @@ module.exports = function(RED) {
 *  ramp-thermostat specific functions
 */
 
-  function getState(actual, profile) {
+  function getState(current, profile) {
   
     var point_mins, pre_mins, pre_target, point_target, target, gradient;
     var state;
     var status = {};
     
     var date = new Date();
-    var actual_mins = date.getHours()*60 + date.getMinutes();
+    var current_mins = date.getHours()*60 + date.getMinutes();
       
     //console.log("name " + profile.name + " profile.points " + JSON.stringify(profile.points));
     for (var k in profile.points) {
@@ -112,25 +119,25 @@ module.exports = function(RED) {
       
       point_target = profile.points[k];
       
-      if (actual_mins < point_mins) {
+      if (current_mins < point_mins) {
         gradient = (point_target - pre_target) / (point_mins - pre_mins);
-        target = pre_target + (gradient * (actual_mins - pre_mins));
+        target = pre_target + (gradient * (current_mins - pre_mins));
         target = target.toFixed(1);
-        //console.log("k=" + k +" gradient " + gradient + " target " + target);               
+        //console.log("k=" + k +" gradient " + gradient + " target " + target);             
         break;
       }
       pre_mins = point_mins;
       pre_target = point_target;
     }
     
-    //console.log("actual "+msg.payload+" target "+target);
+    //console.log("current "+msg.payload+" target "+target);
     
-    if (actual < target) {
+    if (current < target) {
       state = true;
-      status = {fill:"yellow",shape:"dot",text:actual+" < "+target+" ("+profile.name+")"};
+      status = {fill:"yellow",shape:"dot",text:current+" < "+target+" ("+profile.name+")"};
     } else {
       state = false;
-      status = {fill:"grey",shape:"ring",text:actual+" > "+target+" ("+profile.name+")"};
+      status = {fill:"grey",shape:"ring",text:current+" > "+target+" ("+profile.name+")"};
     }
     
     return {"state":state, "target":target, "status":status};
@@ -153,7 +160,7 @@ module.exports = function(RED) {
       status = {fill:"green",shape:"dot",text:"set target to "+target+" ("+profile.name+")"};
     } else {
       valid = false;
-      status = {fill:"red",shape:"dot",text:"invalid type of target."};
+      status = {fill:"red",shape:"dot",text:"invalid type of target"};
     }
         
     return {"profile":profile, "status":status, "isValid": valid};
@@ -187,7 +194,7 @@ module.exports = function(RED) {
           if (found) {
             status = {fill:"green",shape:"dot",text:"profile set to "+profile.name};
           } else {
-            status = {fill:"red",shape:"dot",text:profile.name+" not found!"};
+            status = {fill:"red",shape:"dot",text:profile.name+" not found"};
           }
         }
         break;

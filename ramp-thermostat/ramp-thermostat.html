@@ -11,8 +11,7 @@
 
 <script type="text/x-red" data-help-name="ramp-thermostat">
     <p>A node that emulates a thermostat.</p>
-    <p>The ramp-thermostat controls a heating-device such a valve
-    depending on the actual input temperature and the target temperature.</p>
+    <p>The ramp-thermostat controls an actuator depending on the current input temperature and the target temperature.</p>
     <p>The target temperature is defined by a profile that
     provides the value depending on the current time <code>00:00-24:00</code>.
     The profile consists of several points whose connections build a sequence of lines.
@@ -26,7 +25,7 @@
     <p>The node provides 3 outputs:</p>
       <ul>
         <li><code>state (boolean)</code></li>
-        <li><code>actual temperature</code></li>
+        <li><code>current temperature</code></li>
         <li><code>target temperature</code></li>
       </ul>
 </script>
