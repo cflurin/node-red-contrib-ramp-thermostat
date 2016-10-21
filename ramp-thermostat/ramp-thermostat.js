@@ -23,9 +23,11 @@ module.exports = function(RED) {
       globalContext.set(node_name, this.profile);
     //}
     
+    this.h_plus = Math.abs(parseFloat(config.hysteresisplus)) || 0;
+    this.h_minus = Math.abs(parseFloat(config.hysteresisminus)) || 0;
+        
     this.status({fill:"green",shape:"dot",text:"profile set to "+this.profile.name});
     //this.warn(node_name+" - "+JSON.stringify(this.profile));
-
 
     this.on('input', function(msg) {
       
@@ -42,13 +44,18 @@ module.exports = function(RED) {
           case "setCurrent":
           case "":
             if (!isNaN(msg.payload)) {
-              result = getState(msg.payload, this.profile);
+              result = this.getState(msg.payload, this.profile);
               
               if(isNaN(result.target)) {
                 this.warn("target undefined");
               }
               
-              msg1.payload = result.state;
+              if (result.state !== null) {
+                msg1.payload = result.state;
+              } else {
+                msg1 = null;
+              }
+              
               msg2.payload = msg.payload;
               msg3.payload = result.target;
               
@@ -99,11 +106,12 @@ module.exports = function(RED) {
   RED.nodes.registerType("ramp-thermostat",RampThermostat);
 
 
-/*
-*  ramp-thermostat specific functions
-*/
+  /**
+   *  ramp-thermostat specific functions
+   **/
 
-  function getState(current, profile) {
+  RampThermostat.prototype.getState = function(current, profile) {
+  //function getState(current, profile) {
   
     var point_mins, pre_mins, pre_target, point_target, target, gradient;
     var state;
@@ -122,22 +130,33 @@ module.exports = function(RED) {
       if (current_mins < point_mins) {
         gradient = (point_target - pre_target) / (point_mins - pre_mins);
         target = pre_target + (gradient * (current_mins - pre_mins));
-        target = target.toFixed(1);
         //console.log("k=" + k +" gradient " + gradient + " target " + target);             
         break;
       }
       pre_mins = point_mins;
       pre_target = point_target;
     }
+   
+    var target_plus = parseFloat((target + this.h_plus).toFixed(1));
+    var target_minus = parseFloat((target - this.h_minus).toFixed(1));
     
-    //console.log("current "+msg.payload+" target "+target);
-    
-    if (current < target) {
-      state = true;
-      status = {fill:"yellow",shape:"dot",text:current+" < "+target+" ("+profile.name+")"};
-    } else {
+    //this.warn(target_minus+" - "+target+" - "+target_plus);
+        
+    if (current > target_plus) {
       state = false;
-      status = {fill:"grey",shape:"ring",text:current+" > "+target+" ("+profile.name+")"};
+      status = {fill:"grey",shape:"ring",text:current+" > "+target_plus+" ("+profile.name+")"};
+    } else if (current < target_minus) {
+      state = true;
+      status = {fill:"yellow",shape:"dot",text:current+" < "+target_minus+" ("+profile.name+")"};    
+    } else if (current == target_plus) {
+      state = null;
+      status = {fill:"grey",shape:"ring",text:current+" = "+target_plus+" ("+profile.name+")"}; 
+    } else if (current == target_minus) {
+      state = null;
+      status = {fill:"grey",shape:"ring",text:current+" = "+target_minus+" ("+profile.name+")"};  
+    } else {
+      state = null;
+      status = {fill:"grey",shape:"ring",text:target_minus+" < "+current+" < "+target_plus+" ("+profile.name+")"};    
     }
     
     return {"state":state, "target":target, "status":status};

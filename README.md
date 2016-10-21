@@ -15,17 +15,19 @@ The target temperature is defined by a profile that provides the value depending
 
 A profile has at least 2 points and should typically start at 00:00 and end at 24:00.
 
+The Hysteresis is used to prevent osciliation. The `[+] value is added to the target and the `[-]` (absolute) value is subtracted from the target. Within this neutral zone no action accurs.
 
 ### Usage
 
 This node expects a numeric msg.payload containing the current temperature.
+The msg.topic should be `empty` or set to `setCurrent`. 
 It will calculate the target temperature depending on msg.payload at the current time and output 3 values:
 
 * state (boolean)
 * current temperature
 * target temperature
 
-The state (true/false) is used to control an actuator. The current and target temperature outputs can be wired e.g. into a ui_chart node.
+The state (true/false) is used to control an actuator. The current and target temperature outputs can be wired e.g. into an ui_chart node.
 
 ### Runtime settings
 

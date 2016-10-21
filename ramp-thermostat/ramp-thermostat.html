@@ -4,8 +4,18 @@
         <input type="text" id="node-input-profile">
     </div>
     <div class="form-row">
+        <label for="node-input-hysteresisplus"><i class="fa fa-arrows-v"></i> Hysteresis [+]</label>
+        <input type="text" id="node-input-hysteresisplus" style="width:50px">
+    </div>
+    <div class="form-row">
+        <label for="node-input-hysteresisminus"><i class="fa fa-arrows-v"></i> Hysteresis [-]</label>
+        <input type="text" id="node-input-hysteresisminus" style="width:50px">
+    </div>
+    <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-tips"><span>The Hysteresis is used to prevent osciliation. The [+] value is added to the target and the [-] (absolute) value is subtracted from the target. Within this neutral zone no action accurs.</span>
     </div>
 </script>
 
@@ -36,7 +46,9 @@
         color: '#E9967A',
         defaults: {
             name: {value:""},
-            profile: {value:"",type:"profile"}
+            profile: {value:"",type:"profile"},
+            hysteresisplus: {value:""},
+            hysteresisminus: {value:""}
         },
         inputs:1,
         outputs:3,
@@ -108,7 +120,8 @@
     <input class="input-append-left" type="text" id="node-config-input-time10" style="width:50px">
     <input type="text" id="node-config-input-temp10" style="margin-left:45px; width:50px">
   </div>
-  <div class="form-tips"><span>You can define up to 10 Points. A Profile has at least 2 Points and should typically start at 00:00 and end at 24:00.</span></div>
+  <div class="form-tips"><span>A Profile has at least 2 Points and should typically start at 00:00 and end at 24:00.</span>
+  </div>
 </script>
 
 <script type="text/javascript">
