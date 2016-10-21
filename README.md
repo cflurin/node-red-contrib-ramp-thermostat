@@ -15,7 +15,7 @@ The target temperature is defined by a profile that provides the value depending
 
 A profile has at least 2 points and should typically start at 00:00 and end at 24:00.
 
-The Hysteresis is used to prevent osciliation. The `[+] value is added to the target and the `[-]` (absolute) value is subtracted from the target. Within this neutral zone no action accurs.
+The hysteresis is used to prevent osciliation. The `[+]` value is added to the target and the `[-]` (absolute) value is subtracted from the target. Within this neutral zone no action accurs.
 
 ### Usage
 
