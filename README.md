@@ -19,13 +19,11 @@ The hysteresis is used to prevent osciliation. The `[+]` value is added to the t
 
 ### Usage
 
-This node expects a numeric msg.payload containing the current temperature.
-The msg.topic should be `empty` or set to `setCurrent`. 
-It will calculate the target temperature depending on msg.payload at the current time and output 3 values:
+This node expects a numeric msg.payload containing the current temperature (number). The msg.topic should be `empty` or set to `setCurrent`. It will calculate the target temperature depending on msg.payload at the current time and output 3 values:
 
 * state (boolean)
-* current temperature
-* target temperature
+* current temperature (number)
+* target temperature (number)
 
 The state (true/false) is used to control an actuator. The current and target temperature outputs can be wired e.g. into an ui_chart node.
 

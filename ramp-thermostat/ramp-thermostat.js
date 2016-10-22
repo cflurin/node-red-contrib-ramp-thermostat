@@ -1,6 +1,9 @@
+"use strict";
+var fs = require('fs');
+var path = require('path');
+
 module.exports = function(RED) {
-  "use strict";
-  
+
   function Profile(n) {
     RED.nodes.createNode(this,n);
     this.n = n;
@@ -13,6 +16,9 @@ module.exports = function(RED) {
         
     var node_name = this.name.replace(" ", "_");
     var globalContext = this.context().global;
+    
+    //this.node_version = readNodeVersion();
+    //this.log(" version "+node_version);
     
     // experimental
     //this.profile = globalContext.get(node_name);
@@ -86,10 +92,16 @@ module.exports = function(RED) {
                   result.status = {fill:"green",shape:"dot",text:"profile set to default ("+this.profile.name+")"};
                 }
                 globalContext.set(node_name, this.profile);
-                this.status(result.status); 
+                this.status(result.status);
               } else {
                 this.warn(msg.payload+" not found");
               }
+              break;
+              
+            case "getVersion":
+              var version = readNodeVersion();
+              this.warn("version: "+version);
+              this.status({fill:"green",shape:"dot",text:"version: "+version});
               break;
               
             default:
@@ -262,5 +274,13 @@ module.exports = function(RED) {
     
     points = JSON.parse(points_str);
     return points;
+  }
+  
+  function readNodeVersion () {
+    var package_json = "../package.json";
+    //console.log(__dirname+" - "+package_json);
+    var packageJSONPath = path.join(__dirname, package_json);
+    var packageJSON = JSON.parse(fs.readFileSync(packageJSONPath));
+    return packageJSON.version;
   }
 }
