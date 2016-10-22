@@ -39,68 +39,64 @@ module.exports = function(RED) {
       
       //this.warn(JSON.stringify(msg));
       
-      if (typeof msg.payload !== "undefined") {      
-        switch (msg.topic) {
-          case "setCurrent":
-          case "":
-            if (!isNaN(msg.payload)) {
-              result = this.getState(msg.payload, this.profile);
-              
-              if(isNaN(result.target)) {
-                this.warn("target undefined");
-              }
-              
-              if (result.state !== null) {
-                msg1.payload = result.state;
+      if (typeof msg.payload === "undefined") {
+        this.warn("msg.payload undefined"); 
+      } else { 
+        if(typeof msg.topic === "undefined") {
+          this.warn("msg.topic undefined");
+        } else {
+          switch (msg.topic) {
+            case "setCurrent":
+            case "":
+              if (isNaN(msg.payload)) {
+                this.warn("Non numeric input");              
               } else {
-                msg1 = null;
+                result = this.getState(msg.payload, this.profile);
+                if (result.state !== null) {
+                  msg1.payload = result.state;
+                } else {
+                  msg1 = null;
+                }
+                msg2.payload = msg.payload;
+                msg3.payload = result.target;
+                this.send([msg1, msg2, msg3]);
+                this.status(result.status);
               }
+              break;
               
-              msg2.payload = msg.payload;
-              msg3.payload = result.target;
-              
-              this.send([msg1, msg2, msg3]);
-            } else {
-              node.warn("Non numeric input");
-            }
-            break;
-            
-          case "setTarget":
-            result = setTarget(msg.payload);
-            if (result.isValid) {
-              this.profile = result.profile;
-              globalContext.set(node_name, this.profile);
-            }
-            break;
-          
-          case "setProfile":
-            //this.warn(JSON.stringify(msg.payload));
-            result = setProfile(msg.payload);
-            
-            if (result.found) {
-              this.profile = result.profile;
-              
-              if (this.profile.name === "default") {
-                this.profile = RED.nodes.getNode(config.profile);
-                this.profile.points = getPoints(this.profile.n);             
-                //this.warn("default "+this.profile.name);
-                result.status = {fill:"green",shape:"dot",text:"profile set to default ("+this.profile.name+")"};
+            case "setTarget":
+              result = setTarget(msg.payload);
+              if (result.isValid) {
+                this.profile = result.profile;
+                globalContext.set(node_name, this.profile);
+                this.status(result.status); 
               }
-              
-              globalContext.set(node_name, this.profile);
-            } else {
-              this.warn(msg.payload+" not found");
-            }
-            break;
+              break;
             
-          default:
-            this.warn("invalid topic");
-        }
-      } else {
-        this.warn("msg.payload undefined");
+            case "setProfile":
+              //this.warn(JSON.stringify(msg.payload));
+              result = setProfile(msg.payload);
+              
+              if (result.found) {
+                this.profile = result.profile;
+                if (this.profile.name === "default") {
+                  this.profile = RED.nodes.getNode(config.profile);
+                  this.profile.points = getPoints(this.profile.n);             
+                  //this.warn("default "+this.profile.name);
+                  result.status = {fill:"green",shape:"dot",text:"profile set to default ("+this.profile.name+")"};
+                }
+                globalContext.set(node_name, this.profile);
+                this.status(result.status); 
+              } else {
+                this.warn(msg.payload+" not found");
+              }
+              break;
+              
+            default:
+              this.warn("invalid topic >"+msg.topic+"<");
+          }
+        }       
       }
-      
-      this.status(result.status);
     });
   }
   RED.nodes.registerType("ramp-thermostat",RampThermostat);
@@ -111,7 +107,6 @@ module.exports = function(RED) {
    **/
 
   RampThermostat.prototype.getState = function(current, profile) {
-  //function getState(current, profile) {
   
     var point_mins, pre_mins, pre_target, point_target, target, gradient;
     var state;
@@ -136,7 +131,11 @@ module.exports = function(RED) {
       pre_mins = point_mins;
       pre_target = point_target;
     }
-   
+    
+    if(isNaN(target)) {
+      this.warn("target undefined");
+    }
+    
     var target_plus = parseFloat((target + this.h_plus).toFixed(1));
     var target_minus = parseFloat((target - this.h_minus).toFixed(1));
     
