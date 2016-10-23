@@ -226,6 +226,7 @@ module.exports = function(RED) {
     var found = false;
     var status = {};
     var profile = {};
+    var result = {};
     //var count = 0;
     var type = typeof input;
        
@@ -239,9 +240,9 @@ module.exports = function(RED) {
             if (n.type === "profile" && n.name === input) {
               profile.n = n;
               profile.name = n.name;
-              this.points_result = getPoints(profile.n);
-              if (this.points_result.isValid) {
-                profile.points = this.points_result.points;
+              result = getPoints(profile.n);
+              if (result.isValid) {
+                profile.points = result.points;
               } else {
                 this.warn("Profile temperature not numeric");
               } 
