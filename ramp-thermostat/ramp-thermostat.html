@@ -15,8 +15,6 @@
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
-    <div class="form-tips"><span>ramp-thermostat version: 0.3.0</span>
-    </div>
     <div class="form-tips"><span>The Hysteresis is used to prevent osciliation. The [+] value is added to the target and the [-] (absolute) value is subtracted from the target. Within this neutral zone no action accurs.</span>
     </div>
 </script>
@@ -132,25 +130,25 @@
         defaults: {
             name: {value:'',required:true},
             time1: {value:''},
-            temp1: {value:''},
+            temp1: {value:'', validate:RED.validators.regex(/^[+-]?\d*\.?\d+$|^$/)},
             time2: {value:''},
-            temp2: {value:''},
+            temp2: {value:'', validate:RED.validators.regex(/^[+-]?\d*\.?\d+$|^$/)},
             time3: {value:''},
-            temp3: {value:''},
+            temp3: {value:'', validate:RED.validators.regex(/^[+-]?\d*\.?\d+$|^$/)},
             time4: {value:''},
-            temp4: {value:''},
+            temp4: {value:'', validate:RED.validators.regex(/^[+-]?\d*\.?\d+$|^$/)},
             time5: {value:''},
-            temp5: {value:''},
+            temp5: {value:'', validate:RED.validators.regex(/^[+-]?\d*\.?\d+$|^$/)},
             time6: {value:''},
-            temp6: {value:''},
+            temp6: {value:'', validate:RED.validators.regex(/^[+-]?\d*\.?\d+$|^$/)},
             time7: {value:''},
-            temp7: {value:''},
+            temp7: {value:'', validate:RED.validators.regex(/^[+-]?\d*\.?\d+$|^$/)},
             time8: {value:''},
-            temp8: {value:''},
+            temp8: {value:'', validate:RED.validators.regex(/^[+-]?\d*\.?\d+$|^$/)},
             time9: {value:''},
-            temp9: {value:''},
+            temp9: {value:'', validate:RED.validators.regex(/^[+-]?\d*\.?\d+$|^$/)},
             time10: {value:''},
-            temp10: {value:''},
+            temp10: {value:'', validate:RED.validators.regex(/^[+-]?\d*\.?\d+$|^$/)},
         },
         label: function() {
             return this.name;

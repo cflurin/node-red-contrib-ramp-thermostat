@@ -16,22 +16,27 @@ module.exports = function(RED) {
         
     var node_name = this.name.replace(" ", "_");
     var globalContext = this.context().global;
+    this.current_status = {};
+    this.points_result = {};
     
-    //this.node_version = readNodeVersion();
-    //this.log(" version "+node_version);
+    this.h_plus = Math.abs(parseFloat(config.hysteresisplus)) || 0;
+    this.h_minus = Math.abs(parseFloat(config.hysteresisminus)) || 0;
     
     // experimental
     //this.profile = globalContext.get(node_name);
     
     //if (typeof this.profile === "undefined") {
       this.profile = RED.nodes.getNode(config.profile);
-      this.profile.points = getPoints(this.profile.n);
+      this.points_result = getPoints(this.profile.n);
+      if (this.points_result.isValid) {
+        this.profile.points = this.points_result.points;
+      } else {
+        this.warn("Profile temperature not numeric");
+      }
       globalContext.set(node_name, this.profile);
     //}
     
-    this.h_plus = Math.abs(parseFloat(config.hysteresisplus)) || 0;
-    this.h_minus = Math.abs(parseFloat(config.hysteresisminus)) || 0;
-        
+    
     this.status({fill:"green",shape:"dot",text:"profile set to "+this.profile.name});
     //this.warn(node_name+" - "+JSON.stringify(this.profile));
 
@@ -66,7 +71,8 @@ module.exports = function(RED) {
                 msg2.payload = msg.payload;
                 msg3.payload = result.target;
                 this.send([msg1, msg2, msg3]);
-                this.status(result.status);
+                this.current_status = result.status;
+                this.status(this.current_status);
               }
               break;
               
@@ -75,7 +81,8 @@ module.exports = function(RED) {
               if (result.isValid) {
                 this.profile = result.profile;
                 globalContext.set(node_name, this.profile);
-                this.status(result.status); 
+                this.current_status = result.status;
+                this.status(this.current_status); 
               }
               break;
             
@@ -87,21 +94,40 @@ module.exports = function(RED) {
                 this.profile = result.profile;
                 if (this.profile.name === "default") {
                   this.profile = RED.nodes.getNode(config.profile);
-                  this.profile.points = getPoints(this.profile.n);             
+                  this.points_result = getPoints(this.profile.n);
+                  if (this.points_result.isValid) {
+                    this.profile.points = this.points_result.points;
+                  } else {
+                    this.warn("Profile temperature not numeric");
+                  }         
                   //this.warn("default "+this.profile.name);
-                  result.status = {fill:"green",shape:"dot",text:"profile set to default ("+this.profile.name+")"};
+                  this.current_status = {fill:"green",shape:"dot",text:"profile set to default ("+this.profile.name+")"};
+                } else {
+                  this.current_status = result.status;
                 }
                 globalContext.set(node_name, this.profile);
-                this.status(result.status);
               } else {
+                this.current_status = result.status;
                 this.warn(msg.payload+" not found");
               }
+              this.status(this.current_status);
               break;
               
             case "getVersion":
               var version = readNodeVersion();
+              var pck_name = "node-red-contrib-ramp-thermostat";
+              
+              read_npmVersion(pck_name, function(npm_version) {
+                if (npm_version > version) {
+                  this.warn("A new "+pck_name+" version "+npm_version+" is avaiable");
+                }
+              }.bind(this));
+
               this.warn("version: "+version);
               this.status({fill:"green",shape:"dot",text:"version: "+version});
+              var set_timeout = setTimeout(function() {
+                this.status(this.current_status);
+              }.bind(this), 4000);
               break;
               
             default:
@@ -213,7 +239,12 @@ module.exports = function(RED) {
             if (n.type === "profile" && n.name === input) {
               profile.n = n;
               profile.name = n.name;
-              profile.points = getPoints(profile.n);
+              this.points_result = getPoints(profile.n);
+              if (this.points_result.isValid) {
+                profile.points = this.points_result.points;
+              } else {
+                this.warn("Profile temperature not numeric");
+              } 
               found = true;
             }
             //count++;
@@ -224,7 +255,7 @@ module.exports = function(RED) {
           if (found) {
             status = {fill:"green",shape:"dot",text:"profile set to "+profile.name};
           } else {
-            status = {fill:"red",shape:"dot",text:profile.name+" not found"};
+            status = {fill:"red",shape:"dot",text:input+" not found"};
           }
         }
         break;
@@ -255,25 +286,33 @@ module.exports = function(RED) {
   function getPoints(n) {
     var timei, tempi, arr, minutes;
     var points = {};
+    var valid = true;
     
     var points_str = '{';
     
     for (var i=1; i<=10; i++) {
       timei = "time"+i;
       tempi = "temp"+i;
-      if (typeof(n[timei]) !== "undefined" && n[timei] !== "") {
-        arr = n[timei].split(":");
-        minutes = parseInt(arr[0])*60 + parseInt(arr[1]);
-        points_str += '"' + minutes + '":' + n[tempi] + ',';
+      
+      if (isNaN(n[tempi])) {
+        valid = false;
+      } else {
+        if (typeof(n[timei]) !== "undefined" && n[timei] !== "") {
+          arr = n[timei].split(":");
+          minutes = parseInt(arr[0])*60 + parseInt(arr[1]);
+          points_str += '"' + minutes + '":' + n[tempi] + ',';
+        }
       }
     }
-    points_str = points_str.slice(0,points_str.length-1);
-    points_str += '}';
     
-    //console.log(points_str);
+    if (valid) {
+      points_str = points_str.slice(0,points_str.length-1);
+      points_str += '}';
+      //console.log(points_str);
+      points = JSON.parse(points_str);
+    }
     
-    points = JSON.parse(points_str);
-    return points;
+    return {"points":points, "isValid":valid};
   }
   
   function readNodeVersion () {
@@ -282,5 +321,17 @@ module.exports = function(RED) {
     var packageJSONPath = path.join(__dirname, package_json);
     var packageJSON = JSON.parse(fs.readFileSync(packageJSONPath));
     return packageJSON.version;
+  }
+  
+  function read_npmVersion(pck, callback) {
+    var exec = require('child_process').exec;
+    var cmd = 'npm view '+pck+' version';
+    var npm_version;
+    
+    exec(cmd, function(error, stdout, stderr) {
+      npm_version = stdout.trim();
+      callback(npm_version);
+      //console.log("npm_version "+npm_version);
+    });
   }
 }
