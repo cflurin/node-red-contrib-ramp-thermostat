@@ -36,8 +36,9 @@ module.exports = function(RED) {
       globalContext.set(node_name, this.profile);
     //}
     
+    this.current_status = {fill:"green",shape:"dot",text:"profile set to "+this.profile.name};
     
-    this.status({fill:"green",shape:"dot",text:"profile set to "+this.profile.name});
+    this.status(this.current_status);
     //this.warn(node_name+" - "+JSON.stringify(this.profile));
 
     this.on('input', function(msg) {
@@ -123,7 +124,7 @@ module.exports = function(RED) {
                 }
               }.bind(this));
 
-              this.warn("version: "+version);
+              this.warn("ramp-thermostat version: "+version);
               this.status({fill:"green",shape:"dot",text:"version: "+version});
               var set_timeout = setTimeout(function() {
                 this.status(this.current_status);
