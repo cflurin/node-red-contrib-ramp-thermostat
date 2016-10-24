@@ -125,30 +125,32 @@
 </script>
 
 <script type="text/javascript">
+    var time_re = /(^$)|(^(?:[01]\d|2[0-4]):[0-5]\d$)/;
+    var temp_re = /^[+-]?\d*\.?\d+$|^$/;
     RED.nodes.registerType('profile',{
         category: 'config',
         defaults: {
             name: {value:'',required:true},
-            time1: {value:'', validate:RED.validators.regex(/(^$)|(^(?:[01]\d|2[0-4]):[0-5]\d$)/)},
-            temp1: {value:'', validate:RED.validators.regex(/^[+-]?\d*\.?\d+$|^$/)},
-            time2: {value:'', validate:RED.validators.regex(/(^$)|(^(?:[01]\d|2[0-4]):[0-5]\d$)/)},
-            temp2: {value:'', validate:RED.validators.regex(/^[+-]?\d*\.?\d+$|^$/)},
-            time3: {value:'', validate:RED.validators.regex(/(^$)|(^(?:[01]\d|2[0-4]):[0-5]\d$)/)},
-            temp3: {value:'', validate:RED.validators.regex(/^[+-]?\d*\.?\d+$|^$/)},
-            time4: {value:'', validate:RED.validators.regex(/(^$)|(^(?:[01]\d|2[0-4]):[0-5]\d$)/)},
-            temp4: {value:'', validate:RED.validators.regex(/^[+-]?\d*\.?\d+$|^$/)},
-            time5: {value:'', validate:RED.validators.regex(/(^$)|(^(?:[01]\d|2[0-4]):[0-5]\d$)/)},
-            temp5: {value:'', validate:RED.validators.regex(/^[+-]?\d*\.?\d+$|^$/)},
-            time6: {value:'', validate:RED.validators.regex(/(^$)|(^(?:[01]\d|2[0-4]):[0-5]\d$)/)},
-            temp6: {value:'', validate:RED.validators.regex(/^[+-]?\d*\.?\d+$|^$/)},
-            time7: {value:'', validate:RED.validators.regex(/(^$)|(^(?:[01]\d|2[0-4]):[0-5]\d$)/)},
-            temp7: {value:'', validate:RED.validators.regex(/^[+-]?\d*\.?\d+$|^$/)},
-            time8: {value:'', validate:RED.validators.regex(/(^$)|(^(?:[01]\d|2[0-4]):[0-5]\d$)/)},
-            temp8: {value:'', validate:RED.validators.regex(/^[+-]?\d*\.?\d+$|^$/)},
-            time9: {value:'', validate:RED.validators.regex(/(^$)|(^(?:[01]\d|2[0-4]):[0-5]\d$)/)},
-            temp9: {value:'', validate:RED.validators.regex(/^[+-]?\d*\.?\d+$|^$/)},
-            time10: {value:'', validate:RED.validators.regex(/(^$)|(^(?:[01]\d|2[0-4]):[0-5]\d$)/)},
-            temp10: {value:'', validate:RED.validators.regex(/^[+-]?\d*\.?\d+$|^$/)},
+            time1: {value:'', validate:RED.validators.regex(time_re)},
+            temp1: {value:'', validate:RED.validators.regex(temp_re)},
+            time2: {value:'', validate:RED.validators.regex(time_re)},
+            temp2: {value:'', validate:RED.validators.regex(temp_re)},
+            time3: {value:'', validate:RED.validators.regex(time_re)},
+            temp3: {value:'', validate:RED.validators.regex(temp_re)},
+            time4: {value:'', validate:RED.validators.regex(time_re)},
+            temp4: {value:'', validate:RED.validators.regex(temp_re)},
+            time5: {value:'', validate:RED.validators.regex(time_re)},
+            temp5: {value:'', validate:RED.validators.regex(temp_re)},
+            time6: {value:'', validate:RED.validators.regex(time_re)},
+            temp6: {value:'', validate:RED.validators.regex(temp_re)},
+            time7: {value:'', validate:RED.validators.regex(time_re)},
+            temp7: {value:'', validate:RED.validators.regex(temp_re)},
+            time8: {value:'', validate:RED.validators.regex(time_re)},
+            temp8: {value:'', validate:RED.validators.regex(temp_re)},
+            time9: {value:'', validate:RED.validators.regex(time_re)},
+            temp9: {value:'', validate:RED.validators.regex(temp_re)},
+            time10: {value:'', validate:RED.validators.regex(time_re)},
+            temp10: {value:'', validate:RED.validators.regex(temp_re)},
         },
         label: function() {
             return this.name;
