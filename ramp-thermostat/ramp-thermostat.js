@@ -99,7 +99,7 @@ module.exports = function(RED) {
                   if (this.points_result.isValid) {
                     this.profile.points = this.points_result.points;
                   } else {
-                    this.warn("Profile temperature not numeric");
+                    this.warn("Profile temperature not numeric.");
                   }         
                   //this.warn("default "+this.profile.name);
                   this.current_status = {fill:"green",shape:"dot",text:"profile set to default ("+this.profile.name+")"};
@@ -114,13 +114,15 @@ module.exports = function(RED) {
               this.status(this.current_status);
               break;
               
-            case "getVersion":
+            case "checkUpdate":
               var version = readNodeVersion();
               var pck_name = "node-red-contrib-ramp-thermostat";
               
               read_npmVersion(pck_name, function(npm_version) {
                 if (npm_version > version) {
-                  this.warn("A new "+pck_name+" version "+npm_version+" is avaiable");
+                  this.warn("A new "+pck_name+" version "+npm_version+" is avaiable.");
+                } else {
+                  this.warn(pck_name+" "+version+" is up to date.");
                 }
               }.bind(this));
 

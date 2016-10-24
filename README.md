@@ -27,16 +27,6 @@ This node expects a numeric msg.payload containing the current temperature (numb
 
 The state (true/false) is used to control an actuator. The current and target temperature outputs can be wired e.g. into an ui_chart node.
 
-
-### Get installed and npm Version
-
-```sh
-msg.topic: getVersion
-msg.payload: not used
-```
-
-Note: the installed version get sent instantly to the flow editor debug tab, the npm version after the response from the npm server is received (ca. 15 sec).
-
 ### Runtime settings
 
 **setTarget**
