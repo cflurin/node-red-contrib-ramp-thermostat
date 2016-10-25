@@ -158,15 +158,15 @@ module.exports = function(RED) {
       
     //console.log("name " + profile.name + " profile.points " + JSON.stringify(profile.points));
     for (var k in profile.points) {
-      point_mins = parseInt(k);
+      point_mins = parseInt(profile.points[k].m);
       //console.log("mins " + point_mins + " temp " + profile.points[k]);
       
-      point_target = profile.points[k];
+      point_target = profile.points[k].t;
       
       if (current_mins < point_mins) {
         gradient = (point_target - pre_target) / (point_mins - pre_mins);
         target = pre_target + (gradient * (current_mins - pre_mins));
-        //console.log("k=" + k +" gradient " + gradient + " target " + target);             
+        //this.warn("k=" + k +" gradient " + gradient + " target " + target);          
         break;
       }
       pre_mins = point_mins;
@@ -213,8 +213,8 @@ module.exports = function(RED) {
     
     if (typeof target === "number") {
       profile.name = "manual";
-      profile.points = {"0":target, "1440":target};
-      
+      profile.points = {"1":{"m":0,"t":target},"2":{"m":1440,"t":target}};
+            
       valid = true;
       status = {fill:"green",shape:"dot",text:"set target to "+target+" ("+profile.name+")"};
     } else {
@@ -268,11 +268,14 @@ module.exports = function(RED) {
         profile.name = input.name || "input profile";
         var points = {};
         var arr, minutes;
+        var i = 1;
         
         for (var k in input.points) {
           arr = k.split(":");
           minutes = parseInt(arr[0])*60 + parseInt(arr[1]);
-          points[minutes] = input.points[k];
+          points[i] = JSON.parse('{"m":' + minutes + ',"t":' + input.points[k] + '}');
+          //points[minutes] = input.points[k];
+          i++;
         }
         profile.points = points;
         found = true;
@@ -304,7 +307,7 @@ module.exports = function(RED) {
         if (typeof(n[timei]) !== "undefined" && n[timei] !== "") {
           arr = n[timei].split(":");
           minutes = parseInt(arr[0])*60 + parseInt(arr[1]);
-          points_str += '"' + minutes + '":' + n[tempi] + ',';
+          points_str += '"' + i + '":{"m":' + minutes + ',"t":' + n[tempi] + '},';
         }
       }
     }
@@ -314,6 +317,7 @@ module.exports = function(RED) {
       points_str += '}';
       //console.log(points_str);
       points = JSON.parse(points_str);
+      //console.log(JSON.stringify(points));
     }
     
     return {"points":points, "isValid":valid};
