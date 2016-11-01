@@ -1,12 +1,17 @@
 {
     "name"         : "node-red-contrib-ramp-thermostat",
-    "version"      : "0.3.0",
+    "version"      : "0.3.1",
     "description"  : "A Node-RED node that emulates a thermostat",
     "dependencies": {
     },
     "keywords": [ 
       "node-red",
       "thermostat",
+      "profile",
+      "heating control",
+      "tmeperature control",
+      "energy saving",
+      "multtple heating zones"
       "single room temperature control"
     ],
     "author": "cflurin",

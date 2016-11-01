@@ -79,6 +79,7 @@ module.exports = function(RED) {
               
             case "setTarget":
               result = setTarget(msg.payload);
+              
               if (result.isValid) {
                 this.profile = result.profile;
                 globalContext.set(node_name, this.profile);
@@ -199,7 +200,7 @@ module.exports = function(RED) {
       status = {fill:"grey",shape:"ring",text:target_minus+" < "+current+" < "+target_plus+" ("+profile.name+")"};    
     }
     
-    return {"state":state, "target":target, "status":status};
+    return {"state":state, "target":parseFloat(target.toFixed(1)), "status":status};
   }
   
   function setTarget(target) {
