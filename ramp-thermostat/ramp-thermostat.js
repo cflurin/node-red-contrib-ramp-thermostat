@@ -13,8 +13,15 @@ module.exports = function(RED) {
   
   function RampThermostat(config) {
     RED.nodes.createNode(this, config);
-        
-    var node_name = this.name.replace(" ", "_");
+    
+    this.warn(node_name+" - "+JSON.stringify(this));
+    
+    var node_name;
+    if (typeof this.name !== "undefined" ) {
+      node_name = this.name.replace(" ", "_");
+    } else {
+      node_name = this.id;
+    }
     var globalContext = this.context().global;
     this.current_status = {};
     this.points_result = {};
