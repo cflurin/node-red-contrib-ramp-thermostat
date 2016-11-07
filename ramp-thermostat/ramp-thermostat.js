@@ -14,7 +14,7 @@ module.exports = function(RED) {
   function RampThermostat(config) {
     RED.nodes.createNode(this, config);
     
-    this.warn(node_name+" - "+JSON.stringify(this));
+    //this.warn(node_name+" - "+JSON.stringify(this));
     
     var node_name;
     if (typeof this.name !== "undefined" ) {
