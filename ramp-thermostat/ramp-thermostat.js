@@ -18,7 +18,7 @@ module.exports = function(RED) {
     
     var node_name;
     if (typeof this.name !== "undefined" ) {
-      node_name = this.name.replace(" ", "_");
+      node_name = this.name.replace(/\s/g, "_");
     } else {
       node_name = this.id;
     }
@@ -160,6 +160,8 @@ module.exports = function(RED) {
     var point_mins, pre_mins, pre_target, point_target, target, gradient;
     var state;
     var status = {};
+    
+    current = parseFloat((current).toFixed(1));
     
     var date = new Date();
     var current_mins = date.getHours()*60 + date.getMinutes();
