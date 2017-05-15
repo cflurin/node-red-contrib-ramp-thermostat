@@ -67,8 +67,8 @@ module.exports = function(RED) {
           switch (msg.topic) {
             case "setCurrent":
             case "":
-              if (isNaN(msg.payload)) {
-                this.warn("Non numeric input");              
+              if (typeof msg.payload !== "number") {
+                this.warn("Non numeric input");            
               } else {
                 result = this.getState(msg.payload, this.profile);
                 if (result.state !== null) {
