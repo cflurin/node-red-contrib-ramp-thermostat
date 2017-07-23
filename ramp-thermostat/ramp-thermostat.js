@@ -61,90 +61,90 @@ module.exports = function(RED) {
       if (typeof msg.payload === "undefined") {
         this.warn("msg.payload undefined"); 
       } else { 
-        if(typeof msg.topic === "undefined") {
-          this.warn("msg.topic undefined");
-        } else {
-          switch (msg.topic) {
-            case "setCurrent":
-            case "":
-              if (typeof msg.payload !== "number") {
-                this.warn("Non numeric input");            
+        switch (msg.topic) {
+          case "setCurrent":
+          case "":
+          case undefined:
+            if (typeof msg.payload === "string") {
+              msg.payload = parseFloat(msg.payload);
+            }
+            if (isNaN(msg.payload)) {
+              this.warn("Non numeric input");            
+            } else {
+              result = this.getState(msg.payload, this.profile);
+              if (result.state !== null) {
+                msg1.payload = result.state;
               } else {
-                result = this.getState(msg.payload, this.profile);
-                if (result.state !== null) {
-                  msg1.payload = result.state;
-                } else {
-                  msg1 = null;
-                }
-                msg2.payload = msg.payload;
-                msg3.payload = result.target;
-                this.send([msg1, msg2, msg3]);
-                this.current_status = result.status;
-                this.status(this.current_status);
+                msg1 = null;
               }
-              break;
-              
-            case "setTarget":
-              result = setTarget(msg.payload);
-              
-              if (result.isValid) {
-                this.profile = result.profile;
-                globalContext.set(node_name, this.profile);
-                this.current_status = result.status;
-                this.status(this.current_status); 
-              }
-              break;
-            
-            case "setProfile":
-              //this.warn(JSON.stringify(msg.payload));
-              result = setProfile(msg.payload);
-              
-              if (result.found) {
-                this.profile = result.profile;
-                if (this.profile.name === "default") {
-                  this.profile = RED.nodes.getNode(config.profile);
-                  this.points_result = getPoints(this.profile.n);
-                  if (this.points_result.isValid) {
-                    this.profile.points = this.points_result.points;
-                  } else {
-                    this.warn("Profile temperature not numeric.");
-                  }         
-                  //this.warn("default "+this.profile.name);
-                  this.current_status = {fill:"green",shape:"dot",text:"profile set to default ("+this.profile.name+")"};
-                } else {
-                  this.current_status = result.status;
-                }
-                globalContext.set(node_name, this.profile);
-              } else {
-                this.current_status = result.status;
-                this.warn(msg.payload+" not found");
-              }
+              msg2.payload = msg.payload;
+              msg3.payload = result.target;
+              this.send([msg1, msg2, msg3]);
+              this.current_status = result.status;
               this.status(this.current_status);
-              break;
-              
-            case "checkUpdate":
-              var version = readNodeVersion();
-              var pck_name = "node-red-contrib-ramp-thermostat";
-              
-              read_npmVersion(pck_name, function(npm_version) {
-                if (npm_version > version) {
-                  this.warn("A new "+pck_name+" version "+npm_version+" is avaiable.");
+            }
+            break;
+            
+          case "setTarget":
+            result = setTarget(msg.payload);
+            
+            if (result.isValid) {
+              this.profile = result.profile;
+              globalContext.set(node_name, this.profile);
+              this.current_status = result.status;
+              this.status(this.current_status); 
+            }
+            break;
+          
+          case "setProfile":
+            //this.warn(JSON.stringify(msg.payload));
+            result = setProfile(msg.payload);
+            
+            if (result.found) {
+              this.profile = result.profile;
+              if (this.profile.name === "default") {
+                this.profile = RED.nodes.getNode(config.profile);
+                this.points_result = getPoints(this.profile.n);
+                if (this.points_result.isValid) {
+                  this.profile.points = this.points_result.points;
                 } else {
-                  this.warn(pck_name+" "+version+" is up to date.");
-                }
-              }.bind(this));
+                  this.warn("Profile temperature not numeric.");
+                }         
+                //this.warn("default "+this.profile.name);
+                this.current_status = {fill:"green",shape:"dot",text:"profile set to default ("+this.profile.name+")"};
+              } else {
+                this.current_status = result.status;
+              }
+              globalContext.set(node_name, this.profile);
+            } else {
+              this.current_status = result.status;
+              this.warn(msg.payload+" not found");
+            }
+            this.status(this.current_status);
+            break;
+            
+          case "checkUpdate":
+            var version = readNodeVersion();
+            var pck_name = "node-red-contrib-ramp-thermostat";
+            
+            read_npmVersion(pck_name, function(npm_version) {
+              if (npm_version > version) {
+                this.warn("A new "+pck_name+" version "+npm_version+" is avaiable.");
+              } else {
+                this.warn(pck_name+" "+version+" is up to date.");
+              }
+            }.bind(this));
 
-              this.warn("ramp-thermostat version: "+version);
-              this.status({fill:"green",shape:"dot",text:"version: "+version});
-              var set_timeout = setTimeout(function() {
-                this.status(this.current_status);
-              }.bind(this), 4000);
-              break;
-              
-            default:
-              this.warn("invalid topic >"+msg.topic+"<");
-          }
-        }       
+            this.warn("ramp-thermostat version: "+version);
+            this.status({fill:"green",shape:"dot",text:"version: "+version});
+            var set_timeout = setTimeout(function() {
+              this.status(this.current_status);
+            }.bind(this), 4000);
+            break;
+            
+          default:
+            this.warn("invalid topic >"+msg.topic+"<");
+        }
       }
     });
   }

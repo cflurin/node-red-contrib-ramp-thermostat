@@ -22,22 +22,68 @@
 <script type="text/x-red" data-help-name="ramp-thermostat">
     <p>A node that emulates a thermostat.</p>
     <p>The ramp-thermostat controls an actuator depending on the current input temperature and the target temperature.</p>
-    <p>The target temperature is defined by a profile that
+        
+    <h3>Inputs</h3>
+      <dl class="message-properties">
+        <dt>payload
+            <span class="property-type">number</span>
+        </dt>
+        <dd> current temperature</dd>
+        <dt class="optional">topic <span class="property-type">string</span></dt>
+        <dd> setCurrent (or undefined)</dd>
+      </dl>
+      <dl class="message-properties">
+        <dt>payload
+            <span class="property-type">number</span>
+        </dt>
+        <dd> target temperature</dd>
+        <dt class="optional">topic <span class="property-type">string</span></dt>
+        <dd> setTarget</dd>
+      </dl>
+      <dl class="message-properties">
+        <dt>payload
+            <span class="property-type">string</span>
+        </dt>
+        <dd> profile name</dd>
+        <dt class="optional">topic <span class="property-type">string</span></dt>
+        <dd> setProfile</dd>
+      </dl>
+       <dl class="message-properties">
+        <dt>payload
+            <span class="property-type">object</span>
+        </dt>
+        <dd> JSON e.g. {"name":"myGreatProfile","points":{"00:00":16.0,"08:00":20.0,
+        "20:00":20.0,"24:00":16.0}}</dd>
+        <dt class="optional">topic <span class="property-type">string</span></dt>
+        <dd> setProfile</dd>
+      </dl>     
+    <h3>Outputs</h3>
+      <ol class="node-ports">
+         <li>State
+             <dl class="message-properties">
+                 <dt>payload <span class="property-type">boolean</span></dt>
+                 <dd>the state of the thermostat.</dd>
+             </dl>
+         </li>
+         <li>Current Temperature
+             <dl class="message-properties">
+                 <dt>payload <span class="property-type">number</span></dt>
+                 <dd>the current temperature.</dd>
+             </dl>
+         </li>
+         <li>Target Temperature
+             <dl class="message-properties">
+                 <dt>payload <span class="property-type">number</span></dt>
+                 <dd>the actual target temperature.</dd>
+             </dl>
+         </li>
+      </ol>
+     
+    <h3>Details</h3>
+    <p>The target temperature is defined by a profile that 
     provides the value depending on the current time <code>00:00-24:00</code>.
     The profile consists of several points whose connections build a sequence of lines.
     The switching moment can be optimized by defining a gradient line like a <code>ramp</code>.</p>
-    <p>Input settings at runtime:</p>
-      <ul>
-        <li>msg.topic: setTarget, msg.payload: number</li>
-        <li>msg.topic: setProfile, msg.payload: profile-name</li>
-      </ul>
-
-    <p>The node provides 3 outputs:</p>
-      <ul>
-        <li><code>state (boolean)</code></li>
-        <li><code>current temperature</code></li>
-        <li><code>target temperature</code></li>
-      </ul>
 </script>
 
 <script type="text/javascript">
@@ -52,6 +98,7 @@
         },
         inputs:1,
         outputs:3,
+        outputLabels: ["state","current temperature","target temperature"],
         icon: "trigger.png",
         label: function() {
             return this.name||"ramp-thermostat";
