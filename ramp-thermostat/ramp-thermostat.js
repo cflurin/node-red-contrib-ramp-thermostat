@@ -63,6 +63,7 @@ module.exports = function(RED) {
       } else { 
         switch (msg.topic) {
           case "setCurrent":
+          case "setcurrent":
           case "":
           case undefined:
             if (typeof msg.payload === "string") {
@@ -86,6 +87,7 @@ module.exports = function(RED) {
             break;
             
           case "setTarget":
+          case "settarget":
             result = setTarget(msg.payload);
             
             if (result.isValid) {
@@ -97,6 +99,7 @@ module.exports = function(RED) {
             break;
           
           case "setProfile":
+          case "setprofile":
             //this.warn(JSON.stringify(msg.payload));
             result = setProfile(msg.payload);
             
@@ -124,6 +127,7 @@ module.exports = function(RED) {
             break;
             
           case "checkUpdate":
+          case "checkupdate":
             var version = readNodeVersion();
             var pck_name = "node-red-contrib-ramp-thermostat";
             
