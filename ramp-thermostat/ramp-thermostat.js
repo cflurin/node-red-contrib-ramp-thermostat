@@ -170,13 +170,16 @@ module.exports = function(RED) {
     
     var date = new Date();
     var current_mins = date.getHours()*60 + date.getMinutes();
+
+    // Objects do no guarentee order, lets sort it
+    var points_arr = Object.keys(profile.points).map(key=>{return profile.points[key]}).sort( (a,b)=> { return a.m - b.m });
       
     //console.log("name " + profile.name + " profile.points " + JSON.stringify(profile.points));
-    for (var k in profile.points) {
-      point_mins = parseInt(profile.points[k].m);
+    for( var k=0; k<points_arr.length; k++ ) {
+      point_mins = points_arr[k].m;
       //console.log("mins " + point_mins + " temp " + profile.points[k]);
       
-      point_target = profile.points[k].t;
+      point_target = points_arr[k].t;
       
       if (current_mins < point_mins) {
 
@@ -187,6 +190,7 @@ module.exports = function(RED) {
         }
 
         if( point_mins - pre_mins > this.h_left && point_mins - current_mins <= this.h_left ) {
+          // bring the previous point forward to match ramp max
           pre_mins = point_mins - this.h_left;
         }
 
