@@ -178,6 +178,18 @@ module.exports = function(RED) {
       point_target = profile.points[k].t;
       
       if (current_mins < point_mins) {
+        const ramp_max = 60;
+
+        if( point_mins - current_mins > ramp_max ) {
+          // Not yet in window to start ramping thermostat, stay constant
+          target = pre_target;
+          break;
+        }
+
+        if( point_mins - pre_mins > ramp_max && point_mins - current_mins < ramp_max ) {
+          pre_mins = point_mins - ramp_max;
+        }
+
         gradient = (point_target - pre_target) / (point_mins - pre_mins);
         target = pre_target + (gradient * (current_mins - pre_mins));
         //this.warn("k=" + k +" gradient " + gradient + " target " + target);          
