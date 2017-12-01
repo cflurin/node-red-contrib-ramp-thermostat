@@ -5,17 +5,30 @@
     </div>
     <div class="form-row">
         <label for="node-input-hysteresisplus"><i class="fa fa-arrows-v"></i> Hysteresis [+]</label>
-        <input type="text" id="node-input-hysteresisplus" style="width:50px">
+        <input type="text" id="node-input-hysteresisplus" style="width:50px"> (degrees)
     </div>
     <div class="form-row">
         <label for="node-input-hysteresisminus"><i class="fa fa-arrows-v"></i> Hysteresis [-]</label>
-        <input type="text" id="node-input-hysteresisminus" style="width:50px">
+        <input type="text" id="node-input-hysteresisminus" style="width:50px"> (degrees)
     </div>
     <div class="form-row">
+        <label for="node-input-hysteresisleft"><i class="fa fa-arrows-h"></i> Hysteresis</label>
+        <input type="text" id="node-input-hysteresisleft" style="width:50px"> (mins)
+    </div>    
+    <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
+        <input type="text" id="node-input-name" placeholder="Name"> 
     </div>
-    <div class="form-tips"><span>The Hysteresis is used to prevent osciliation. The [+] value is added to the target and the [-] (absolute) value is subtracted from the target. Within this neutral zone no action accurs.</span>
+    <div class="form-tips"><span class="fa fa-arrows-v"> Hysteresis is used to prevent osciliation. 
+        The [+] value is added to the target and the [-] (absolute) value is 
+        subtracted from the target. Within this neutral zone no action accurs.<br/>
+    </span>
+    </div>
+    <div class="form-tips">
+    <span class="fa fa-arrows-h"> Hysteresis defines the maximum time prior to a point to apply the 
+        gradient for calculating the thermostat value. Above this time, the thermostat will
+        stay constant, thus avoiding need to add extra points.
+    </span>
     </div>
 </script>
 
@@ -94,7 +107,8 @@
             name: {value:""},
             profile: {value:"",type:"profile"},
             hysteresisplus: {value:0, validate:RED.validators.number()},
-            hysteresisminus: {value:0, validate:RED.validators.number()}
+            hysteresisminus: {value:0, validate:RED.validators.number()},
+            hysteresisleft: {value:60, validate:RED.validators.number()}
         },
         inputs:1,
         outputs:3,
