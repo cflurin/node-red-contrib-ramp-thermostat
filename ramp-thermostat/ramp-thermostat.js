@@ -172,14 +172,21 @@ module.exports = function(RED) {
     var current_mins = date.getHours()*60 + date.getMinutes();
 
     // Objects do no guarentee order, lets sort it
-    var points_arr = Object.keys(profile.points).map(key=>{return profile.points[key]}).sort( (a,b)=> { return a.m - b.m });
+    var points_arr = Object.keys(profile.points)
+                           .map(key=>{return profile.points[key]})
+                           .sort( (a,b)=> { return a.m - b.m });
       
     //console.log("name " + profile.name + " profile.points " + JSON.stringify(profile.points));
     for( var k=0; k<points_arr.length; k++ ) {
       point_mins = points_arr[k].m;
       //console.log("mins " + point_mins + " temp " + profile.points[k]);
       
-      point_target = points_arr[k].t;
+      target = point_target = points_arr[k].t;
+
+      if( points_arr.length == 1 ) {
+        // no need to go any further
+        break;
+      }
       
       if (current_mins < point_mins) {
 
@@ -205,6 +212,7 @@ module.exports = function(RED) {
     
     if(isNaN(target)) {
       this.warn("target undefined");
+      return {"state":null, "target":0, "status": {fill:"red",shape:"dot",text:"No points in profile"}};
     }
     
     var target_plus = parseFloat((target + this.h_plus).toFixed(1));
