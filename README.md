@@ -23,6 +23,13 @@ A profile has at least 2 points and should typically start at 00:00 and end at 2
 
 The hysteresis is used to prevent osciliation. The `[+]` value is added to the target and the `[-]` (absolute) value is subtracted from the target. Within this neutral zone no action accurs.
 
+The ramp limit defines the maximum time prior to a point to apply the 
+gradient for calculating the thermostat value. Prior to this time, the thermostat will
+stay constant, thus avoiding need to add extra points. <br/>
+For example, 2 points `06:00 [10 degrees] - 14:00 [21 degrees]` with no ramp limit will gradually increase thermostate over the 8 hour period. Setting the ramp
+limit to 60 minutes will keep the thermostat at 10 degrees until `13:00` and then will increase only over the last
+hour. Set to `1440` or leave empty to disable this feature.
+
 ## Usage
 
 This node expects a `numeric` msg.payload containing the current temperature (number). The msg.topic should be set to `setCurrent`. It will calculate the target temperature depending on msg.payload at the current time and output 3 values:

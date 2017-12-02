@@ -28,7 +28,7 @@ module.exports = function(RED) {
     
     this.h_plus = Math.abs(parseFloat(config.hysteresisplus)) || 0;
     this.h_minus = Math.abs(parseFloat(config.hysteresisminus)) || 0;
-    this.h_left = Math.abs(parseInt(config.hysteresisleft)) || 1440;
+    this.ramp_limit = Math.abs(parseInt(config.ramplimit)) || 1440;
     
     // experimental
     //this.profile = globalContext.get(node_name);
@@ -190,15 +190,15 @@ module.exports = function(RED) {
       
       if (current_mins < point_mins) {
 
-        if( point_mins - current_mins > this.h_left ) {
+        if( point_mins - current_mins > this.ramp_limit ) {
           // Not yet in window to start ramping thermostat, stay constant
           target = pre_target;
           break;
         }
 
-        if( point_mins - pre_mins > this.h_left && point_mins - current_mins <= this.h_left ) {
+        if( point_mins - pre_mins > this.ramp_limit && point_mins - current_mins <= this.ramp_limit ) {
           // bring the previous point forward to match ramp max
-          pre_mins = point_mins - this.h_left;
+          pre_mins = point_mins - this.ramp_limit;
         }
 
         gradient = (point_target - pre_target) / (point_mins - pre_mins);

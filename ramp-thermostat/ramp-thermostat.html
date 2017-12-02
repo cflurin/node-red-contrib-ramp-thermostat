@@ -12,8 +12,8 @@
         <input type="text" id="node-input-hysteresisminus" style="width:50px"> (degrees)
     </div>
     <div class="form-row">
-        <label for="node-input-hysteresisleft"><i class="fa fa-arrows-h"></i> Hysteresis</label>
-        <input type="text" id="node-input-hysteresisleft" style="width:50px"> (mins)
+        <label for="node-input-hysteresisleft"><i class="fa fa-stop-circle"></i> Ramp Limit</label>
+        <input type="text" id="node-input-ramplimit" style="width:50px"> (mins)
     </div>    
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
@@ -25,8 +25,8 @@
     </span>
     </div>
     <div class="form-tips">
-    <span class="fa fa-arrows-h"> Hysteresis defines the maximum time prior to a point to apply the 
-        gradient for calculating the thermostat value. Above this time, the thermostat will
+    <span class="fa fa-stop-circle"> Ramp Limit defines the maximum time prior to a point to apply the 
+        gradient for calculating the thermostat value. Prior to this time, the thermostat will
         stay constant, thus avoiding need to add extra points.
     </span>
     </div>
@@ -97,6 +97,17 @@
     provides the value depending on the current time <code>00:00-24:00</code>.
     The profile consists of several points whose connections build a sequence of lines.
     The switching moment can be optimized by defining a gradient line like a <code>ramp</code>.</p>
+    <p>The hysteresis is used to prevent osciliation. The `[+]` value is added to the target and the `[-]` (absolute) value is subtracted from the target. Within this neutral zone no action accurs.</p>
+    <p>
+    The ramp limit defines the maximum time prior to a point to apply the 
+    gradient for calculating the thermostat value. Prior to this time, the thermostat will
+    stay constant, thus avoiding need to add extra points. <br/>
+    For example, 2 points:<br/><code>06:00: 10 (degrees)</code><br/><code>14:00: 21 (degrees)</code><br/> 
+    with no ramp limit will gradually increase thermostat over the 8 hour period. Setting the ramp
+    limit to 60 minutes will keep the thermostat at 10 degrees until <code>13:00</code> and then will 
+    increase only over the last
+    hour. <br/>Set to <code>1440</code> or leave empty to disable this feature.
+    </p>
 </script>
 
 <script type="text/javascript">
@@ -108,7 +119,7 @@
             profile: {value:"",type:"profile"},
             hysteresisplus: {value:0, validate:RED.validators.number()},
             hysteresisminus: {value:0, validate:RED.validators.number()},
-            hysteresisleft: {value:60, validate:RED.validators.number()}
+            ramplimit: {value:"", validate:RED.validators.regex(/^\d*$/)}
         },
         inputs:1,
         outputs:3,
