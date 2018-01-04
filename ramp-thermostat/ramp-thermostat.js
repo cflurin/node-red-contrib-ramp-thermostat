@@ -126,6 +126,24 @@ module.exports = function(RED) {
             this.status(this.current_status);
             break;
             
+          case "setHysteresisPlus":
+          case "sethysteresisplus":
+            result = setHysteresisPlus(msg.payload);
+            if (result.isValid) {
+              this.h_plus = result.hysteresis_plus;
+            }
+            this.status(result.status);
+            break;
+            
+          case "setHysteresisMinus":
+          case "sethysteresisminus":
+            result = setHysteresisMinus(msg.payload);
+            if (result.isValid) {
+              this.h_minus = Math.abs(result.hysteresis_minus);
+            }
+            this.status(result.status);
+            break;
+         
           case "checkUpdate":
           case "checkupdate":
             var version = readNodeVersion();
@@ -302,6 +320,44 @@ module.exports = function(RED) {
     }
 
     return {"profile":profile, "status":status, "found":found};
+  }
+  
+  function setHysteresisPlus(hp) {
+    var valid;
+    var status = {};
+
+    if (typeof hp === "string") {
+      hp = parseFloat(hp);
+    }
+    
+    if (typeof hp === "number") {
+      status = {fill:"green",shape:"dot",text:"hysteresis [+] set to "+hp};
+      valid = true;
+    } else {
+      valid = false;
+      status = {fill:"red",shape:"dot",text:"invalid type of hysteresis [+]"};
+    }
+        
+    return {"hysteresis_plus":hp, "status":status, "isValid":valid};
+  }
+    
+  function setHysteresisMinus(hm) {
+    var valid;
+    var status = {};
+
+    if (typeof hm === "string") {
+      hm = parseFloat(hm);
+    }
+    
+    if (typeof hm === "number") {
+      status = {fill:"green",shape:"dot",text:"hysteresis [-] set to "+hm};
+      valid = true;
+    } else {
+      valid = false;
+      status = {fill:"red",shape:"dot",text:"invalid type of hysteresis [-]"};
+    }
+        
+    return {"hysteresis_minus":hm, "status":status, "isValid":valid};
   }
     
   function getPoints(n) {
