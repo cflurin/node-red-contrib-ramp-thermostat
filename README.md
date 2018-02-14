@@ -41,8 +41,23 @@ The state (true/false) is used to control an actuator. The current and target te
 msg.topic: setTarget
 msg.payload: nn.n (number)
 ```
-
 The target will be valid until a new target or a profile is set again or until node-red is restarted.
+
+### setHysteresisPlus
+
+```sh
+msg.topic: setHysteresisPlus
+msg.payload: nn.n (number)
+```
+The Hydteresis will be valid until a new hysteresis is set again or until node-red is restated.
+
+### setHysteresisMinus
+
+```sh
+msg.topic: setHysteresisMinus
+msg.payload: nn.n (number)
+```
+The Hydteresis will be valid until a new hysteresis is set again or until node-red is restated.
 
 ### setProfile
 

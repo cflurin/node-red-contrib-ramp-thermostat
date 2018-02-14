@@ -165,7 +165,7 @@ module.exports = function(RED) {
             break;
             
           default:
-            this.warn("invalid topic >"+msg.topic+"<");
+            this.warn("invalid topic >"+msg.topic+"< - set msg.topic to e.g. 'setCurrent'");
         }
       }
     });
