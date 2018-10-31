@@ -22,26 +22,22 @@ module.exports = function(RED) {
     } else {
       node_name = this.id;
     }
-    var globalContext = this.context().global;
+    //var globalContext = this.context().global;
     this.current_status = {};
     this.points_result = {};
     
     this.h_plus = Math.abs(parseFloat(config.hysteresisplus)) || 0;
     this.h_minus = Math.abs(parseFloat(config.hysteresisminus)) || 0;
     
-    // experimental
-    //this.profile = globalContext.get(node_name);
-    
-    //if (typeof this.profile === "undefined") {
-      this.profile = RED.nodes.getNode(config.profile);
-      this.points_result = getPoints(this.profile.n);
-      if (this.points_result.isValid) {
-        this.profile.points = this.points_result.points;
-      } else {
-        this.warn("Profile temperature not numeric");
-      }
-      globalContext.set(node_name, this.profile);
-    //}
+    this.profile = RED.nodes.getNode(config.profile);
+    this.points_result = getPoints(this.profile.n);
+    if (this.points_result.isValid) {
+      this.profile.points = this.points_result.points;
+    } else {
+      this.warn("Profile temperature not numeric");
+    }
+    this.warn(typeof this.profile);
+    //globalContext.set(node_name, this.profile);
     
     this.current_status = {fill:"green",shape:"dot",text:"profile set to "+this.profile.name};
     
@@ -75,11 +71,13 @@ module.exports = function(RED) {
               result = this.getState(msg.payload, this.profile);
               if (result.state !== null) {
                 msg1.payload = result.state;
+                msg2.payload = msg.payload;
+                msg3.payload = result.target;
               } else {
                 msg1 = null;
+                msg2 = null;
+                msg3 = null;
               }
-              msg2.payload = msg.payload;
-              msg3.payload = result.target;
               this.send([msg1, msg2, msg3]);
               this.current_status = result.status;
               this.status(this.current_status);
@@ -92,7 +90,7 @@ module.exports = function(RED) {
             
             if (result.isValid) {
               this.profile = result.profile;
-              globalContext.set(node_name, this.profile);
+              //globalContext.set(node_name, this.profile);
               this.current_status = result.status;
               this.status(this.current_status); 
             }
@@ -118,7 +116,7 @@ module.exports = function(RED) {
               } else {
                 this.current_status = result.status;
               }
-              globalContext.set(node_name, this.profile);
+              //globalContext.set(node_name, this.profile);
             } else {
               this.current_status = result.status;
               this.warn(msg.payload+" not found");
@@ -206,7 +204,12 @@ module.exports = function(RED) {
     }
     
     if(isNaN(target)) {
-      this.warn("target undefined");
+      if (Object.values(profile.points)[Object.values(profile.points).length - 1].m < 1440) {
+        this.warn("target undefined, the profile must end at 24:00");
+      } else {
+        this.warn("target undefined");
+      }
+      return {"state": null};
     }
     
     var target_plus = parseFloat((target + this.h_plus).toFixed(1));
