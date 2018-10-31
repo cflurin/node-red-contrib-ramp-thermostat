@@ -36,7 +36,6 @@ module.exports = function(RED) {
     } else {
       this.warn("Profile temperature not numeric");
     }
-    this.warn(typeof this.profile);
     //globalContext.set(node_name, this.profile);
     
     this.current_status = {fill:"green",shape:"dot",text:"profile set to "+this.profile.name};
