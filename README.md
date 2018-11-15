@@ -72,7 +72,7 @@ You can even define an input profile (JSON):
 
 ```sh
 msg.topic: setProfile
-msg.payload: {"name":"myGreatProfile","points":{"00:00":16.0,"08:00":20.0,"20:00":20.0,"24:00":16.0}}
+msg.payload: {"name":"myGreatProfile","points":{"00:00":16.0,"08:00":20.0,"20:00":20.0,"23:59":16.0}}
 ```
 
 # Examples
@@ -91,5 +91,5 @@ The profile is defined using 6 points:
 "06:00": 20.5
 "18:00": 20.5
 "20:00": 18.0
-"24:00": 18.0
+"23:59": 18.0
 ```
