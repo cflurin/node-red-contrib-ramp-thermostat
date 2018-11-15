@@ -45,9 +45,9 @@ module.exports = function(RED) {
 
     this.on('input', function(msg) {
       
-      var msg1 = {"topic":"state"};
-      var msg2 = {"topic":"current"};
-      var msg3 = {"topic":"target"};
+      var msg1 = Object.assign(RED.util.cloneMessage(msg), {"topic":"state"});
+      var msg2 = Object.assign(RED.util.cloneMessage(msg), {"topic":"current"});
+      var msg3 = Object.assign(RED.util.cloneMessage(msg), {"topic":"target"});
       
       var result = {};
       
