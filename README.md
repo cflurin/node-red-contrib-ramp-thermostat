@@ -17,9 +17,9 @@ Run the following command in your Node-RED user directory - typically `~/.node-r
 
 ## Configuration
 
-The target temperature is defined by a profile that provides the value depending on the current time `00:00-24:00`. The profile consists of several points whose connections build a sequence of lines. The switching moment can be optimized by defining a gradient line like a `ramp`.
+The target temperature is defined by a profile that provides the value depending on the current time `00:00-23:59`. The profile consists of several points whose connections build a sequence of lines. The switching moment can be optimized by defining a gradient line like a `ramp`.
 
-A profile has at least 2 points and should typically start at 00:00 and end at 24:00.
+A profile has at least 2 points and should typically start at 00:00 and end at 23:59.
 
 The hysteresis is used to prevent osciliation. The `[+]` value is added to the target and the `[-]` (absolute) value is subtracted from the target. Within this neutral zone no action accurs.
 
