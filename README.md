@@ -10,7 +10,7 @@ A Node-RED contrib-node that emulates a programmable thermostat.
 [Wikipedia Source](https://en.wikipedia.org/wiki/Programmable_thermostat): *A **programmable thermostat** is a thermostat which is designed to adjust the temperature according to a series of programmed settings that take effect at different times of the day. Programmable thermostats may also be called **clock thermostats**.*
 
 The ramp-thermostat controls an actuator depending on the current input temperature and the target temperature (setpoint).
-The target temperature is defined by a `profile` for a whole day. A weekly or holiday setting can be achieved using several profiles.
+The target temperature is defined by a `profile` for a day period (00:00-23:59). A weekly or holiday setting can be achieved using several profiles.
 
 ## Configuration
 
