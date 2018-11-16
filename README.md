@@ -72,9 +72,7 @@ msg.payload: {"name":"myGreatProfile","points":{"00:00":16.0,"08:00":20.0,"20:00
 
 # Examples
 
-![ramp-thermostat2](https://cloud.githubusercontent.com/assets/5056710/19309043/eb5b9bea-9082-11e6-995b-fb254b7d71e5.jpeg)
-
-![ramp-thermostat1](https://cloud.githubusercontent.com/assets/5056710/19308860/0f76f35e-9082-11e6-8fa8-c1014cd3f142.jpg)
+![rt-office](https://user-images.githubusercontent.com/5056710/48631938-f730dc80-e9bf-11e8-96ed-9464605dae47.png)
 
 The profile is defined using 6 points:
 
@@ -83,8 +81,8 @@ The profile is defined using 6 points:
 
 "00:00": 18.0
 "03:00": 18.0
-"06:00": 20.5
-"18:00": 20.5
+"06:00": 20.0
+"19:00": 20.0
 "20:00": 18.0
 "23:59": 18.0
 ```
