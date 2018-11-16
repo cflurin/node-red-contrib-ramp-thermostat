@@ -217,6 +217,15 @@
         },
         label: function() {
             return this.name;
+        },
+        oneditprepare: function() {
+          var timei;
+          for (var i = 1; i <= 10; i++) {
+            timei = "time"+i;
+            if (this[timei] === "24:00") {
+              this[timei] = "23:59"
+            }
+          }
         }
     });
 </script>

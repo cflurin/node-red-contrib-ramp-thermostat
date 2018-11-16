@@ -199,7 +199,7 @@ module.exports = function(RED) {
       pre_mins = point_mins;
       pre_target = point_target;
     }
-    
+
     if(isNaN(target)) {
       if (Object.values(profile.points)[Object.values(profile.points).length - 1].m < 1439) {
         this.warn("target undefined, the profile must end at 23:59");
