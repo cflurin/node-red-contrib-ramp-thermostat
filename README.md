@@ -8,13 +8,7 @@
 A Node-RED contrib-node that emulates a thermostat.
 
 The ramp-thermostat controls an actuator depending on the current input temperature and the target temperature (setpoint).
-The target temperature can be defined by a `profile` for a whole day. A weekly or holiday setting can be achieved using several profiles.
-
-### Installation
-
-Run the following command in your Node-RED user directory - typically `~/.node-red`
-
-    $ npm install node-red-contrib-ramp-thermostat
+The target temperature is defined by a `profile` for a whole day. A weekly or holiday setting can be achieved using several profiles.
 
 ## Configuration
 
