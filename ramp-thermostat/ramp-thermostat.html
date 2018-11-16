@@ -69,7 +69,7 @@
             <span class="property-type">object</span>
         </dt>
         <dd> JSON e.g. {"name":"myGreatProfile","points":{"00:00":16.0,"08:00":20.0,
-        "20:00":20.0,"24:00":16.0}}</dd>
+        "20:00":20.0,"23:59":16.0}}</dd>
         <dt class="optional">topic <span class="property-type">string</span></dt>
         <dd> setProfile</dd>
       </dl>     
@@ -97,7 +97,7 @@
      
     <h3>Details</h3>
     <p>The target temperature is defined by a profile that 
-    provides the value depending on the current time <code>00:00-24:00</code>.
+    provides the value depending on the current time <code>00:00-23:59</code>.
     The profile consists of several points whose connections build a sequence of lines.
     The switching moment can be optimized by defining a gradient line like a <code>ramp</code>.</p>
 </script>
@@ -183,7 +183,7 @@
     <input class="input-append-left" type="time" id="node-config-input-time10" style="width:100px">
     <input type="number" id="node-config-input-temp10" style="margin-left:45px; width:100px" step=".1">
   </div>
-  <div class="form-tips"><span>A Profile has at least 2 Points and should typically start at 00:00 and end at 24:00.</span>
+  <div class="form-tips"><span>A Profile has at least 2 Points and must start at 00:00 and end at 23:59.</span>
   </div>
 </script>
 

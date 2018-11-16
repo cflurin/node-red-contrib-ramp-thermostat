@@ -70,13 +70,11 @@ module.exports = function(RED) {
               result = this.getState(msg.payload, this.profile);
               if (result.state !== null) {
                 msg1.payload = result.state;
-                msg2.payload = msg.payload;
-                msg3.payload = result.target;
               } else {
                 msg1 = null;
-                msg2 = null;
-                msg3 = null;
               }
+              msg2.payload = msg.payload;
+              msg3.payload = result.target;
               this.send([msg1, msg2, msg3]);
               this.current_status = result.status;
               this.status(this.current_status);
@@ -192,7 +190,7 @@ module.exports = function(RED) {
       
       point_target = profile.points[k].t;
       
-      if (current_mins < point_mins) {
+      if (current_mins <= point_mins) {
         gradient = (point_target - pre_target) / (point_mins - pre_mins);
         target = pre_target + (gradient * (current_mins - pre_mins));
         //this.warn("k=" + k +" gradient " + gradient + " target " + target);          
@@ -203,8 +201,8 @@ module.exports = function(RED) {
     }
     
     if(isNaN(target)) {
-      if (Object.values(profile.points)[Object.values(profile.points).length - 1].m < 1440) {
-        this.warn("target undefined, the profile must end at 24:00");
+      if (Object.values(profile.points)[Object.values(profile.points).length - 1].m < 1439) {
+        this.warn("target undefined, the profile must end at 23:59");
       } else {
         this.warn("target undefined");
       }

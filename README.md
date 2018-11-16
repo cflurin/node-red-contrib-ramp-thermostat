@@ -8,6 +8,7 @@
 A Node-RED contrib-node that emulates a thermostat.
 
 The ramp-thermostat controls an actuator depending on the current input temperature and the target temperature (setpoint).
+The target temperature can be defined by a `profile` for a whole day. A weekly or holiday setting can be achieved using several profiles.
 
 ### Installation
 
@@ -19,7 +20,7 @@ Run the following command in your Node-RED user directory - typically `~/.node-r
 
 The target temperature is defined by a profile that provides the value depending on the current time `00:00-23:59`. The profile consists of several points whose connections build a sequence of lines. The switching moment can be optimized by defining a gradient line like a `ramp`.
 
-A profile has at least 2 points and should typically start at 00:00 and end at 23:59.
+**A profile has at least 2 points and must start at 00:00 and end at 23:59.**
 
 The hysteresis is used to prevent osciliation. The `[+]` value is added to the target and the `[-]` (absolute) value is subtracted from the target. Within this neutral zone no action accurs.
 
