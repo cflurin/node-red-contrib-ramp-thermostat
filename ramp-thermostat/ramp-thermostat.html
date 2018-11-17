@@ -223,7 +223,10 @@
           for (var i = 1; i <= 10; i++) {
             timei = "time"+i;
             if (this[timei] === "24:00") {
-              this[timei] = "23:59"
+              // Since 24:00 is not supported by the 'time' input field, we will convert it to 23:59 into both the Javascript
+              // object and into the 'time' input field on the screen.
+              this[timei] = "23:59";
+              $("#node-config-input-time"+i).val("23:59");
             }
           }
         }

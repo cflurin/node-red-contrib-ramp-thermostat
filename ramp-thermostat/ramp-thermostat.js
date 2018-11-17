@@ -190,7 +190,7 @@ module.exports = function(RED) {
       
       point_target = profile.points[k].t;
       
-      if (current_mins <= point_mins) {
+      if (current_mins < point_mins || current_mins === 1439) {
         gradient = (point_target - pre_target) / (point_mins - pre_mins);
         target = pre_target + (gradient * (current_mins - pre_mins));
         //this.warn("k=" + k +" gradient " + gradient + " target " + target);          
