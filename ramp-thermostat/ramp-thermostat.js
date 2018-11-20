@@ -31,6 +31,9 @@ module.exports = function(RED) {
     
     this.profile = RED.nodes.getNode(config.profile);
     this.points_result = getPoints(this.profile.n);
+    
+    //this.warn(JSON.stringify(this.points_result.points, null, 2));
+    
     if (this.points_result.isValid) {
       this.profile.points = this.points_result.points;
     } else {
@@ -56,8 +59,7 @@ module.exports = function(RED) {
       if (typeof msg.payload === "undefined") {
         this.warn("msg.payload undefined"); 
       } else { 
-        switch (msg.topic) {
-          case "setCurrent":
+        switch (msg.topic.toLowerCase()) {
           case "setcurrent":
           case "":
           case undefined:
@@ -80,8 +82,6 @@ module.exports = function(RED) {
               this.status(this.current_status);
             }
             break;
-            
-          case "setTarget":
           case "settarget":
             result = setTarget(msg.payload);
             
@@ -92,8 +92,19 @@ module.exports = function(RED) {
               this.status(this.current_status); 
             }
             break;
-          
-          case "setProfile":
+          case "getprofile":
+            result = getProfile(msg.payload);
+            if (result.found) {
+              msg3.topic = "getProfile";
+              msg3.payload = result.profile;            
+            } else {
+              this.warn(msg.payload+" not found");
+            }
+            
+            this.send([null, null, msg3]);
+            this.current_status = result.status;
+            this.status(this.current_status);
+            break;
           case "setprofile":
             //this.warn(JSON.stringify(msg.payload));
             result = setProfile(msg.payload);
@@ -120,8 +131,6 @@ module.exports = function(RED) {
             }
             this.status(this.current_status);
             break;
-            
-          case "setHysteresisPlus":
           case "sethysteresisplus":
             result = setHysteresisPlus(msg.payload);
             if (result.isValid) {
@@ -129,8 +138,6 @@ module.exports = function(RED) {
             }
             this.status(result.status);
             break;
-            
-          case "setHysteresisMinus":
           case "sethysteresisminus":
             result = setHysteresisMinus(msg.payload);
             if (result.isValid) {
@@ -138,8 +145,6 @@ module.exports = function(RED) {
             }
             this.status(result.status);
             break;
-         
-          case "checkUpdate":
           case "checkupdate":
             var version = readNodeVersion();
             var pck_name = "node-red-contrib-ramp-thermostat";
@@ -158,7 +163,6 @@ module.exports = function(RED) {
               this.status(this.current_status);
             }.bind(this), 4000);
             break;
-            
           default:
             this.warn("invalid topic >"+msg.topic+"< - set msg.topic to e.g. 'setCurrent'");
         }
@@ -255,6 +259,37 @@ module.exports = function(RED) {
     }
         
     return {"profile":profile, "status":status, "isValid": valid};
+  }
+  
+  function getProfile(input) {
+    var found = false;
+    var status = {};
+    var profile = {};
+    var result = {};
+    
+    RED.nodes.eachNode(function(n) {
+      if (n.type === "profile" && n.name === input) {
+        profile.name = n.name;
+        profile.points = {};
+        var timei, tempi;
+        for (var i=1; i<=10; i++) {
+          timei = "time"+i;
+          tempi = "temp"+i;
+          if (n[timei] !== "") {
+            profile.points[n[timei]] = n[tempi];
+          }
+        }
+        found = true;
+      }
+    });
+    
+    if (found) {
+      status = {fill:"green",shape:"dot",text:"get profile "+profile.name};
+    } else {
+      status = {fill:"red",shape:"dot",text:input+" not found"};
+    }
+    
+    return {"profile":profile, "status":status, "found":found};
   }
   
   function setProfile(input) {

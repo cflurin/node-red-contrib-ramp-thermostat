@@ -56,6 +56,30 @@ msg.payload: nn.n (number)
 ```
 The Hydteresis will be valid until a new hysteresis is set again or until node-red is restated.
 
+### getProfile
+
+```sh
+msg.topic: getProfile
+msg.payload: profile-name
+```
+
+The profile object is sent to the output 3:
+
+```sh
+msg.topic: getProfile
+msg.payload: {
+  "name": "profile-name",
+  "points": {
+    "00:00": "16.0",
+    "04:00": "16.0",
+    "08:00": "20.0",
+    "19:00": "20.0",
+    "20:00": "16.0",
+    "23:59": "16.0"
+  }
+}
+``` 
+
 ### setProfile
 
 ```sh
