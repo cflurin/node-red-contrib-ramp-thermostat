@@ -276,7 +276,7 @@ module.exports = function(RED) {
           timei = "time"+i;
           tempi = "temp"+i;
           if (n[timei] !== "") {
-            profile.points[n[timei]] = n[tempi];
+            profile.points[n[timei]] = parseFloat(n[tempi]);
           }
         }
         found = true;
