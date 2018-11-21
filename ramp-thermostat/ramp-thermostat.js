@@ -22,7 +22,7 @@ module.exports = function(RED) {
     } else {
       node_name = this.id;
     }
-    //var globalContext = this.context().global;
+
     this.current_status = {};
     this.points_result = {};
     
@@ -39,7 +39,6 @@ module.exports = function(RED) {
     } else {
       this.warn("Profile temperature not numeric");
     }
-    //globalContext.set(node_name, this.profile);
     
     this.current_status = {fill:"green",shape:"dot",text:"profile set to "+this.profile.name};
     
@@ -87,7 +86,6 @@ module.exports = function(RED) {
             
             if (result.isValid) {
               this.profile = result.profile;
-              //globalContext.set(node_name, this.profile);
               this.current_status = result.status;
               this.status(this.current_status); 
             }
@@ -124,7 +122,6 @@ module.exports = function(RED) {
               } else {
                 this.current_status = result.status;
               }
-              //globalContext.set(node_name, this.profile);
             } else {
               this.current_status = result.status;
               this.warn(msg.payload+" not found");
@@ -270,13 +267,15 @@ module.exports = function(RED) {
     RED.nodes.eachNode(function(n) {
       if (n.type === "profile" && n.name === input) {
         profile.name = n.name;
-        profile.points = {};
+        profile.points = [];
         var timei, tempi;
         for (var i=1; i<=10; i++) {
           timei = "time"+i;
           tempi = "temp"+i;
+          var point = {};
           if (n[timei] !== "") {
-            profile.points[n[timei]] = parseFloat(n[tempi]);
+            point[n[timei]] = parseFloat(n[tempi]);
+            profile.points.push(point);
           }
         }
         found = true;
@@ -297,7 +296,6 @@ module.exports = function(RED) {
     var status = {};
     var profile = {};
     var result = {};
-    //var count = 0;
     var type = typeof input;
        
     switch (type) {
@@ -318,11 +316,8 @@ module.exports = function(RED) {
               } 
               found = true;
             }
-            //count++;
           });
-            
-          //console.log("count " + count);
-          
+
           if (found) {
             status = {fill:"green",shape:"dot",text:"profile set to "+profile.name};
           } else {
