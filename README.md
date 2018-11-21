@@ -69,14 +69,27 @@ The profile object is sent to the output 3:
 msg.topic: getProfile
 msg.payload: {
   "name": "profile-name",
-  "points": {
-    "00:00": 16,
-    "04:00": 16,
-    "08:00": 20.5,
-    "19:00": 20.5,
-    "20:00": 16,
-    "23:59": 16
-  }
+  "points": [{
+    "00:00": 18
+  }, {
+    "04:00": 18
+  }, {
+    "08:00": 20.5
+  }, {
+    "12:00": 20.5
+  }, {
+    "12:00": 19
+  }, {
+    "12:30": 19
+  }, {
+    "13:30": 20.5
+  }, {
+    "19:00": 20.5
+  }, {
+    "19:00": 18
+  }, {
+    "23:59": 18
+  }]
 }
 ``` 
 
@@ -98,7 +111,7 @@ msg.payload: {"name":"myGreatProfile","points":{"00:00":16.0,"08:00":20.0,"20:00
 
 # Examples
 
-![rt-office](https://user-images.githubusercontent.com/5056710/48631938-f730dc80-e9bf-11e8-96ed-9464605dae47.png)
+![rt-office3](https://user-images.githubusercontent.com/5056710/48859523-8c681280-edbe-11e8-93f9-54dd0fb9524c.png)
 
 The profile is defined using 6 points:
 
