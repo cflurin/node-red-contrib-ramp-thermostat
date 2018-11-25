@@ -69,7 +69,7 @@
             <span class="property-type">object</span>
         </dt>
         <dd> JSON e.g. {"name":"myGreatProfile","points":{"00:00":16.0,"08:00":20.0,
-        "20:00":20.0,"24:00":16.0}}</dd>
+        "20:00":20.0,"23:59":16.0}}</dd>
         <dt class="optional">topic <span class="property-type">string</span></dt>
         <dd> setProfile</dd>
       </dl>     
@@ -97,7 +97,7 @@
      
     <h3>Details</h3>
     <p>The target temperature is defined by a profile that 
-    provides the value depending on the current time <code>00:00-24:00</code>.
+    provides the value depending on the current time <code>00:00-23:59</code>.
     The profile consists of several points whose connections build a sequence of lines.
     The switching moment can be optimized by defining a gradient line like a <code>ramp</code>.</p>
 </script>
@@ -131,92 +131,177 @@
   
   <div>
     <label style="float:left; margin-bottom:10px"><i class="fa fa-dot-circle-o"></i> Points:</label>
-    <label style="float:left;margin-left:45px;"> Time (hh:mm)&nbsp;&nbsp&nbsp;Temp (°)</label>
+    <label style="float:left;margin-left:45px;"> Time (hh:mm)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Temp (°)</label>
   </div>
   <div class="form-row">
     <label for="node-config-input-time1"><i class="fa fa-dot-circle-o"></i> #1</label>
-    <input class="input-append-left" type="text" id="node-config-input-time1" style="width:50px">
-    <input type="text" id="node-config-input-temp1" style="margin-left:45px; width:50px">
+    <input class="input-append-left" type="time" id="node-config-input-time1" style="width:100px">
+    <input type="number" id="node-config-input-temp1" style="margin-left:45px; width:100px" step=".1">
   </div>
   <div class="form-row">
     <label for="node-config-input-time2"><i class="fa fa-dot-circle-o"></i> #2</label>
-    <input class="input-append-left" type="text" id="node-config-input-time2" style="width:50px">
-    <input type="text" id="node-config-input-temp2" style="margin-left:45px; width:50px">
+    <input class="input-append-left" type="time" id="node-config-input-time2" style="width:100px">
+    <input type="number" id="node-config-input-temp2" style="margin-left:45px; width:100px" step=".1">
   </div>
   <div class="form-row">
     <label for="node-config-input-time3"><i class="fa fa-dot-circle-o"></i> #3</label>
-    <input class="input-append-left" type="text" id="node-config-input-time3" style="width:50px">
-    <input type="text" id="node-config-input-temp3" style="margin-left:45px; width:50px">
+    <input class="input-append-left" type="time" id="node-config-input-time3" style="width:100px">
+    <input type="number" id="node-config-input-temp3" style="margin-left:45px; width:100px" step=".1">
   </div>
   <div class="form-row">
     <label for="node-config-input-time4"><i class="fa fa-dot-circle-o"></i> #4</label>
-    <input class="input-append-left" type="text" id="node-config-input-time4" style="width:50px">
-    <input type="text" id="node-config-input-temp4" style="margin-left:45px; width:50px">
+    <input class="input-append-left" type="time" id="node-config-input-time4" style="width:100px">
+    <input type="number" id="node-config-input-temp4" style="margin-left:45px; width:100px" step=".1">
   </div>
   <div class="form-row">
     <label for="node-config-input-time5"><i class="fa fa-dot-circle-o"></i> #5</label>
-    <input class="input-append-left" type="text" id="node-config-input-time5" style="width:50px">
-    <input type="text" id="node-config-input-temp5" style="margin-left:45px; width:50px">
+    <input class="input-append-left" type="time" id="node-config-input-time5" style="width:100px">
+    <input type="number" id="node-config-input-temp5" style="margin-left:45px; width:100px" step=".1">
   </div>
   <div class="form-row">
     <label for="node-config-input-time6"><i class="fa fa-dot-circle-o"></i> #6</label>
-    <input class="input-append-left" type="text" id="node-config-input-time6" style="width:50px">
-    <input type="text" id="node-config-input-temp6" style="margin-left:45px; width:50px">
+    <input class="input-append-left" type="time" id="node-config-input-time6" style="width:100px">
+    <input type="number" id="node-config-input-temp6" style="margin-left:45px; width:100px" step=".1">
   </div>
   <div class="form-row">
     <label for="node-config-input-time7"><i class="fa fa-dot-circle-o"></i> #7</label>
-    <input class="input-append-left" type="text" id="node-config-input-time7" style="width:50px">
-    <input type="text" id="node-config-input-temp7" style="margin-left:45px; width:50px">
+    <input class="input-append-left" type="time" id="node-config-input-time7" style="width:100px">
+    <input type="number" id="node-config-input-temp7" style="margin-left:45px; width:100px" step=".1">
   </div>
   <div class="form-row">
     <label for="node-config-input-time8"><i class="fa fa-dot-circle-o"></i> #8</label>
-    <input class="input-append-left" type="text" id="node-config-input-time8" style="width:50px">
-    <input type="text" id="node-config-input-temp8" style="margin-left:45px; width:50px">
+    <input class="input-append-left" type="time" id="node-config-input-time8" style="width:100px">
+    <input type="number" id="node-config-input-temp8" style="margin-left:45px; width:100px" step=".1">
   </div>
   <div class="form-row">
     <label for="node-config-input-time9"><i class="fa fa-dot-circle-o"></i> #9</label>
-    <input class="input-append-left" type="text" id="node-config-input-time9" style="width:50px">
-    <input type="text" id="node-config-input-temp9" style="margin-left:45px; width:50px">
+    <input class="input-append-left" type="time" id="node-config-input-time9" style="width:100px">
+    <input type="number" id="node-config-input-temp9" style="margin-left:45px; width:100px" step=".1">
   </div>
   <div class="form-row">
     <label for="node-config-input-time10"><i class="fa fa-dot-circle-o"></i> #10</label>
-    <input class="input-append-left" type="text" id="node-config-input-time10" style="width:50px">
-    <input type="text" id="node-config-input-temp10" style="margin-left:45px; width:50px">
+    <input class="input-append-left" type="time" id="node-config-input-time10" style="width:100px">
+    <input type="number" id="node-config-input-temp10" style="margin-left:45px; width:100px" step=".1">
   </div>
-  <div class="form-tips"><span>A Profile has at least 2 Points and should typically start at 00:00 and end at 24:00.</span>
+  <div class="form-tips"><span>A Profile has at least 2 Points and must start at 00:00 and end at 23:59.</span>
   </div>
 </script>
 
 <script type="text/javascript">
-    var time_re = /(^$)|(^(?:[01]\d|2[0-4]):[0-5]\d$)/;
-    var temp_re = /^[+-]?\d*\.?\d+$|^$/;
+    var time_re = new RegExp(/(^$)|(^(?:[01]\d|2[0-4]):[0-5]\d$)/);
+    var temp_re = new RegExp(/^[+-]?\d*\.?\d+$|^$/);
+    
+    function validateSetPoints(property, value) {
+        // The index is after the first 4 characters ('time' or 'temp')
+        var index = parseInt(property.substring(4));
+
+        if (value) {
+             if (property.startsWith("time")) {
+                // Invalid time: when time pattern invalid
+                if (!time_re.test(value)) {
+                    return false;
+                }
+                
+                var parts = value.split(':');
+                var minutes = 60 * parseInt(parts[0]) + parseInt(parts[1]);
+                var first = true;
+                var last = true;
+                
+                // Search backwards (from the current pair to pair 1) for non-empty times
+                for (var i = index - 1; i > 0; i--) {
+                    if ($('#node-config-input-time' + i)[0].value) {
+                        first = false;
+                        parts = $('#node-config-input-time' + i)[0].value.split(':');
+                        var previousMinutes = 60 * parseInt(parts[0]) + parseInt(parts[1]);
+                        // Invalid time: when current time is before (or equals) the previous non-empty time
+                        if (minutes <= previousMinutes) {
+                            return false;
+                        }
+                        break;
+                    }
+                }
+                
+                // Invalid time: when first non-empty time pattern not equals 00:00
+                if (first && value != "00:00") {
+                    return false;
+                }
+                
+                // Search forward (from the current pair to pair 10) for non-empty times
+                for (var j = index + 1; j <= 10; j++) {
+                    if ($('#node-config-input-time' + j)[0].value) {
+                        last = false;
+                        break;
+                    }
+                }
+                
+                if (last && value != "23:59") {
+                    return false;
+                }
+            }
+            else {
+                // Invalid temperature: when temperature pattern invalid
+                if (!temp_re.test(value)) {
+                    return false;
+                }
+            }
+        }
+        else {
+            if (property.startsWith("time")) {
+                // Invalid time: when time empty but temperature not empty
+                if ($('#node-config-input-temp' + index)[0].value) {
+                    return false;
+                }
+            }
+            else {
+                // Invalid temperature: when temperature empty but time not empty
+                if ($('#node-config-input-time' + index)[0].value) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+    
     RED.nodes.registerType('profile',{
         category: 'config',
         defaults: {
-            name: {value:'',required:true},
-            time1: {value:'', validate:RED.validators.regex(time_re)},
-            temp1: {value:'', validate:RED.validators.regex(temp_re)},
-            time2: {value:'', validate:RED.validators.regex(time_re)},
-            temp2: {value:'', validate:RED.validators.regex(temp_re)},
-            time3: {value:'', validate:RED.validators.regex(time_re)},
-            temp3: {value:'', validate:RED.validators.regex(temp_re)},
-            time4: {value:'', validate:RED.validators.regex(time_re)},
-            temp4: {value:'', validate:RED.validators.regex(temp_re)},
-            time5: {value:'', validate:RED.validators.regex(time_re)},
-            temp5: {value:'', validate:RED.validators.regex(temp_re)},
-            time6: {value:'', validate:RED.validators.regex(time_re)},
-            temp6: {value:'', validate:RED.validators.regex(temp_re)},
-            time7: {value:'', validate:RED.validators.regex(time_re)},
-            temp7: {value:'', validate:RED.validators.regex(temp_re)},
-            time8: {value:'', validate:RED.validators.regex(time_re)},
-            temp8: {value:'', validate:RED.validators.regex(temp_re)},
-            time9: {value:'', validate:RED.validators.regex(time_re)},
-            temp9: {value:'', validate:RED.validators.regex(temp_re)},
-            time10: {value:'', validate:RED.validators.regex(time_re)},
-            temp10: {value:'', validate:RED.validators.regex(temp_re)},
+            name:   {value:'', required:true},
+            time1:  {value:'', validate:function(v) { return validateSetPoints.call(this,"time1" ,v) }},
+            temp1:  {value:'', validate:function(v) { return validateSetPoints.call(this,"temp1" ,v) }},
+            time2:  {value:'', validate:function(v) { return validateSetPoints.call(this,"time2" ,v) }},
+            temp2:  {value:'', validate:function(v) { return validateSetPoints.call(this,"temp2" ,v) }},
+            time3:  {value:'', validate:function(v) { return validateSetPoints.call(this,"time3" ,v) }},
+            temp3:  {value:'', validate:function(v) { return validateSetPoints.call(this,"temp3" ,v) }},
+            time4:  {value:'', validate:function(v) { return validateSetPoints.call(this,"time4" ,v) }},
+            temp4:  {value:'', validate:function(v) { return validateSetPoints.call(this,"temp4" ,v) }},
+            time5:  {value:'', validate:function(v) { return validateSetPoints.call(this,"time5" ,v) }},
+            temp5:  {value:'', validate:function(v) { return validateSetPoints.call(this,"temp5" ,v) }},
+            time6:  {value:'', validate:function(v) { return validateSetPoints.call(this,"time6" ,v) }},
+            temp6:  {value:'', validate:function(v) { return validateSetPoints.call(this,"temp6" ,v) }},
+            time7:  {value:'', validate:function(v) { return validateSetPoints.call(this,"time7" ,v) }},
+            temp7:  {value:'', validate:function(v) { return validateSetPoints.call(this,"temp7" ,v) }},
+            time8:  {value:'', validate:function(v) { return validateSetPoints.call(this,"time8" ,v) }},
+            temp8:  {value:'', validate:function(v) { return validateSetPoints.call(this,"temp8" ,v) }},
+            time9:  {value:'', validate:function(v) { return validateSetPoints.call(this,"time9" ,v) }},
+            temp9:  {value:'', validate:function(v) { return validateSetPoints.call(this,"temp9" ,v) }},
+            time10: {value:'', validate:function(v) { return validateSetPoints.call(this,"time10",v) }},
+            temp10: {value:'', validate:function(v) { return validateSetPoints.call(this,"temp10",v) }},
         },
         label: function() {
             return this.name;
+        },
+        oneditprepare: function() {
+          var timei;
+          for (var i = 1; i <= 10; i++) {
+            timei = "time"+i;
+            if (this[timei] === "24:00") {
+              // Since 24:00 is not supported by the 'time' input field, we will convert it to 23:59 into 
+              // both the Javascript object and into the 'time' input field on the screen.
+              this[timei] = "23:59";
+              $("#node-config-input-time"+i).val("23:59");
+            }
+          }
         }
     });
 </script>
