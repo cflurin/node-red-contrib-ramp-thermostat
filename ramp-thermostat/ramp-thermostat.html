@@ -191,6 +191,19 @@
     var time_re = new RegExp(/(^$)|(^(?:[01]\d|2[0-4]):[0-5]\d$)/);
     var temp_re = new RegExp(/^[+-]?\d*\.?\d+$|^$/);
     
+    function getValue(node, property) {
+        var field = $('#node-config-input-' + property)[0];
+    
+        // When the config screen is open, we need to get the values from the screen.
+        // When the config screen is closed, we need to get the values from 'this' Javascript object.
+        if (field) {
+            return field.value;
+        }
+        else {
+            return node[property];
+        }
+    }
+    
     function validateSetPoints(property, value) {
         // The index is after the first 4 characters ('time' or 'temp')
         var index = parseInt(property.substring(4));
@@ -209,9 +222,9 @@
                 
                 // Search backwards (from the current pair to pair 1) for non-empty times
                 for (var i = index - 1; i > 0; i--) {
-                    if ($('#node-config-input-time' + i)[0].value) {
+                    if (getValue(this, 'time' + i)) {
                         first = false;
-                        parts = $('#node-config-input-time' + i)[0].value.split(':');
+                        parts = getValue(this, 'time' + i).split(':');
                         var previousMinutes = 60 * parseInt(parts[0]) + parseInt(parts[1]);
                         // Invalid time: when current time is before (or equals) the previous non-empty time
                         if (minutes <= previousMinutes) {
@@ -228,7 +241,7 @@
                 
                 // Search forward (from the current pair to pair 10) for non-empty times
                 for (var j = index + 1; j <= 10; j++) {
-                    if ($('#node-config-input-time' + j)[0].value) {
+                    if (getValue(this, 'time' + j)) {
                         last = false;
                         break;
                     }
@@ -248,13 +261,13 @@
         else {
             if (property.startsWith("time")) {
                 // Invalid time: when time empty but temperature not empty
-                if ($('#node-config-input-temp' + index)[0].value) {
+                if (getValue(this, 'temp' + index)) {
                     return false;
                 }
             }
             else {
                 // Invalid temperature: when temperature empty but time not empty
-                if ($('#node-config-input-time' + index)[0].value) {
+                if (getValue(this, 'time' + index)) {
                     return false;
                 }
             }
