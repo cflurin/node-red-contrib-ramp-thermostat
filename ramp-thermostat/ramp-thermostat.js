@@ -22,7 +22,7 @@ module.exports = function(RED) {
     } else {
       node_name = this.id;
     }
-    //var globalContext = this.context().global;
+
     this.current_status = {};
     this.points_result = {};
     
@@ -31,12 +31,14 @@ module.exports = function(RED) {
     
     this.profile = RED.nodes.getNode(config.profile);
     this.points_result = getPoints(this.profile.n);
+    
+    //this.warn(JSON.stringify(this.points_result.points, null, 2));
+    
     if (this.points_result.isValid) {
       this.profile.points = this.points_result.points;
     } else {
       this.warn("Profile temperature not numeric");
     }
-    //globalContext.set(node_name, this.profile);
     
     this.current_status = {fill:"green",shape:"dot",text:"profile set to "+this.profile.name};
     
@@ -45,9 +47,9 @@ module.exports = function(RED) {
 
     this.on('input', function(msg) {
       
-      var msg1 = {"topic":"state"};
-      var msg2 = {"topic":"current"};
-      var msg3 = {"topic":"target"};
+      var msg1 = Object.assign(RED.util.cloneMessage(msg), {"topic":"state"});
+      var msg2 = Object.assign(RED.util.cloneMessage(msg), {"topic":"current"});
+      var msg3 = Object.assign(RED.util.cloneMessage(msg), {"topic":"target"});
       
       var result = {};
       
@@ -56,8 +58,7 @@ module.exports = function(RED) {
       if (typeof msg.payload === "undefined") {
         this.warn("msg.payload undefined"); 
       } else { 
-        switch (msg.topic) {
-          case "setCurrent":
+        switch (msg.topic.toLowerCase()) {
           case "setcurrent":
           case "":
           case undefined:
@@ -70,32 +71,38 @@ module.exports = function(RED) {
               result = this.getState(msg.payload, this.profile);
               if (result.state !== null) {
                 msg1.payload = result.state;
-                msg2.payload = msg.payload;
-                msg3.payload = result.target;
               } else {
                 msg1 = null;
-                msg2 = null;
-                msg3 = null;
               }
+              msg2.payload = msg.payload;
+              msg3.payload = result.target;
               this.send([msg1, msg2, msg3]);
               this.current_status = result.status;
               this.status(this.current_status);
             }
             break;
-            
-          case "setTarget":
           case "settarget":
             result = setTarget(msg.payload);
             
             if (result.isValid) {
               this.profile = result.profile;
-              //globalContext.set(node_name, this.profile);
               this.current_status = result.status;
               this.status(this.current_status); 
             }
             break;
-          
-          case "setProfile":
+          case "getprofile":
+            result = getProfile(msg.payload);
+            if (result.found) {
+              msg3.topic = "getProfile";
+              msg3.payload = result.profile;            
+            } else {
+              this.warn(msg.payload+" not found");
+            }
+            
+            this.send([null, null, msg3]);
+            this.current_status = result.status;
+            this.status(this.current_status);
+            break;
           case "setprofile":
             //this.warn(JSON.stringify(msg.payload));
             result = setProfile(msg.payload);
@@ -115,15 +122,12 @@ module.exports = function(RED) {
               } else {
                 this.current_status = result.status;
               }
-              //globalContext.set(node_name, this.profile);
             } else {
               this.current_status = result.status;
               this.warn(msg.payload+" not found");
             }
             this.status(this.current_status);
             break;
-            
-          case "setHysteresisPlus":
           case "sethysteresisplus":
             result = setHysteresisPlus(msg.payload);
             if (result.isValid) {
@@ -131,8 +135,6 @@ module.exports = function(RED) {
             }
             this.status(result.status);
             break;
-            
-          case "setHysteresisMinus":
           case "sethysteresisminus":
             result = setHysteresisMinus(msg.payload);
             if (result.isValid) {
@@ -140,8 +142,6 @@ module.exports = function(RED) {
             }
             this.status(result.status);
             break;
-         
-          case "checkUpdate":
           case "checkupdate":
             var version = readNodeVersion();
             var pck_name = "node-red-contrib-ramp-thermostat";
@@ -160,7 +160,6 @@ module.exports = function(RED) {
               this.status(this.current_status);
             }.bind(this), 4000);
             break;
-            
           default:
             this.warn("invalid topic >"+msg.topic+"< - set msg.topic to e.g. 'setCurrent'");
         }
@@ -192,7 +191,7 @@ module.exports = function(RED) {
       
       point_target = profile.points[k].t;
       
-      if (current_mins < point_mins) {
+      if (current_mins < point_mins || point_mins === 1439) {
         gradient = (point_target - pre_target) / (point_mins - pre_mins);
         target = pre_target + (gradient * (current_mins - pre_mins));
         //this.warn("k=" + k +" gradient " + gradient + " target " + target);          
@@ -201,10 +200,10 @@ module.exports = function(RED) {
       pre_mins = point_mins;
       pre_target = point_target;
     }
-    
+
     if(isNaN(target)) {
-      if (Object.values(profile.points)[Object.values(profile.points).length - 1].m < 1440) {
-        this.warn("target undefined, the profile must end at 24:00");
+      if (Object.values(profile.points)[Object.values(profile.points).length - 1].m < 1439) {
+        this.warn("target undefined, the profile must end at 23:59");
       } else {
         this.warn("target undefined");
       }
@@ -259,12 +258,44 @@ module.exports = function(RED) {
     return {"profile":profile, "status":status, "isValid": valid};
   }
   
+  function getProfile(input) {
+    var found = false;
+    var status = {};
+    var profile = {};
+    var result = {};
+    
+    RED.nodes.eachNode(function(n) {
+      if (n.type === "profile" && n.name === input) {
+        profile.name = n.name;
+        profile.points = [];
+        var timei, tempi;
+        for (var i=1; i<=10; i++) {
+          timei = "time"+i;
+          tempi = "temp"+i;
+          var point = {};
+          if (n[timei] !== "") {
+            point[n[timei]] = parseFloat(n[tempi]);
+            profile.points.push(point);
+          }
+        }
+        found = true;
+      }
+    });
+    
+    if (found) {
+      status = {fill:"green",shape:"dot",text:"get profile "+profile.name};
+    } else {
+      status = {fill:"red",shape:"dot",text:input+" not found"};
+    }
+    
+    return {"profile":profile, "status":status, "found":found};
+  }
+  
   function setProfile(input) {
     var found = false;
     var status = {};
     var profile = {};
     var result = {};
-    //var count = 0;
     var type = typeof input;
        
     switch (type) {
@@ -285,11 +316,8 @@ module.exports = function(RED) {
               } 
               found = true;
             }
-            //count++;
           });
-            
-          //console.log("count " + count);
-          
+
           if (found) {
             status = {fill:"green",shape:"dot",text:"profile set to "+profile.name};
           } else {

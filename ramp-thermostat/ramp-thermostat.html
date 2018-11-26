@@ -69,7 +69,7 @@
             <span class="property-type">object</span>
         </dt>
         <dd> JSON e.g. {"name":"myGreatProfile","points":{"00:00":16.0,"08:00":20.0,
-        "20:00":20.0,"24:00":16.0}}</dd>
+        "20:00":20.0,"23:59":16.0}}</dd>
         <dt class="optional">topic <span class="property-type">string</span></dt>
         <dd> setProfile</dd>
       </dl>     
@@ -97,7 +97,7 @@
      
     <h3>Details</h3>
     <p>The target temperature is defined by a profile that 
-    provides the value depending on the current time <code>00:00-24:00</code>.
+    provides the value depending on the current time <code>00:00-23:59</code>.
     The profile consists of several points whose connections build a sequence of lines.
     The switching moment can be optimized by defining a gradient line like a <code>ramp</code>.</p>
 </script>
@@ -131,59 +131,59 @@
   
   <div>
     <label style="float:left; margin-bottom:10px"><i class="fa fa-dot-circle-o"></i> Points:</label>
-    <label style="float:left;margin-left:45px;"> Time (hh:mm)&nbsp;&nbsp&nbsp;Temp (°)</label>
+    <label style="float:left;margin-left:45px;"> Time (hh:mm)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Temp (°)</label>
   </div>
   <div class="form-row">
     <label for="node-config-input-time1"><i class="fa fa-dot-circle-o"></i> #1</label>
-    <input class="input-append-left" type="text" id="node-config-input-time1" style="width:50px">
-    <input type="text" id="node-config-input-temp1" style="margin-left:45px; width:50px">
+    <input class="input-append-left" type="time" id="node-config-input-time1" style="width:100px">
+    <input type="number" id="node-config-input-temp1" style="margin-left:45px; width:100px" step=".1">
   </div>
   <div class="form-row">
     <label for="node-config-input-time2"><i class="fa fa-dot-circle-o"></i> #2</label>
-    <input class="input-append-left" type="text" id="node-config-input-time2" style="width:50px">
-    <input type="text" id="node-config-input-temp2" style="margin-left:45px; width:50px">
+    <input class="input-append-left" type="time" id="node-config-input-time2" style="width:100px">
+    <input type="number" id="node-config-input-temp2" style="margin-left:45px; width:100px" step=".1">
   </div>
   <div class="form-row">
     <label for="node-config-input-time3"><i class="fa fa-dot-circle-o"></i> #3</label>
-    <input class="input-append-left" type="text" id="node-config-input-time3" style="width:50px">
-    <input type="text" id="node-config-input-temp3" style="margin-left:45px; width:50px">
+    <input class="input-append-left" type="time" id="node-config-input-time3" style="width:100px">
+    <input type="number" id="node-config-input-temp3" style="margin-left:45px; width:100px" step=".1">
   </div>
   <div class="form-row">
     <label for="node-config-input-time4"><i class="fa fa-dot-circle-o"></i> #4</label>
-    <input class="input-append-left" type="text" id="node-config-input-time4" style="width:50px">
-    <input type="text" id="node-config-input-temp4" style="margin-left:45px; width:50px">
+    <input class="input-append-left" type="time" id="node-config-input-time4" style="width:100px">
+    <input type="number" id="node-config-input-temp4" style="margin-left:45px; width:100px" step=".1">
   </div>
   <div class="form-row">
     <label for="node-config-input-time5"><i class="fa fa-dot-circle-o"></i> #5</label>
-    <input class="input-append-left" type="text" id="node-config-input-time5" style="width:50px">
-    <input type="text" id="node-config-input-temp5" style="margin-left:45px; width:50px">
+    <input class="input-append-left" type="time" id="node-config-input-time5" style="width:100px">
+    <input type="number" id="node-config-input-temp5" style="margin-left:45px; width:100px" step=".1">
   </div>
   <div class="form-row">
     <label for="node-config-input-time6"><i class="fa fa-dot-circle-o"></i> #6</label>
-    <input class="input-append-left" type="text" id="node-config-input-time6" style="width:50px">
-    <input type="text" id="node-config-input-temp6" style="margin-left:45px; width:50px">
+    <input class="input-append-left" type="time" id="node-config-input-time6" style="width:100px">
+    <input type="number" id="node-config-input-temp6" style="margin-left:45px; width:100px" step=".1">
   </div>
   <div class="form-row">
     <label for="node-config-input-time7"><i class="fa fa-dot-circle-o"></i> #7</label>
-    <input class="input-append-left" type="text" id="node-config-input-time7" style="width:50px">
-    <input type="text" id="node-config-input-temp7" style="margin-left:45px; width:50px">
+    <input class="input-append-left" type="time" id="node-config-input-time7" style="width:100px">
+    <input type="number" id="node-config-input-temp7" style="margin-left:45px; width:100px" step=".1">
   </div>
   <div class="form-row">
     <label for="node-config-input-time8"><i class="fa fa-dot-circle-o"></i> #8</label>
-    <input class="input-append-left" type="text" id="node-config-input-time8" style="width:50px">
-    <input type="text" id="node-config-input-temp8" style="margin-left:45px; width:50px">
+    <input class="input-append-left" type="time" id="node-config-input-time8" style="width:100px">
+    <input type="number" id="node-config-input-temp8" style="margin-left:45px; width:100px" step=".1">
   </div>
   <div class="form-row">
     <label for="node-config-input-time9"><i class="fa fa-dot-circle-o"></i> #9</label>
-    <input class="input-append-left" type="text" id="node-config-input-time9" style="width:50px">
-    <input type="text" id="node-config-input-temp9" style="margin-left:45px; width:50px">
+    <input class="input-append-left" type="time" id="node-config-input-time9" style="width:100px">
+    <input type="number" id="node-config-input-temp9" style="margin-left:45px; width:100px" step=".1">
   </div>
   <div class="form-row">
     <label for="node-config-input-time10"><i class="fa fa-dot-circle-o"></i> #10</label>
-    <input class="input-append-left" type="text" id="node-config-input-time10" style="width:50px">
-    <input type="text" id="node-config-input-temp10" style="margin-left:45px; width:50px">
+    <input class="input-append-left" type="time" id="node-config-input-time10" style="width:100px">
+    <input type="number" id="node-config-input-temp10" style="margin-left:45px; width:100px" step=".1">
   </div>
-  <div class="form-tips"><span>A Profile has at least 2 Points and should typically start at 00:00 and end at 24:00.</span>
+  <div class="form-tips"><span>A Profile has at least 2 Points and must start at 00:00 and end at 23:59.</span>
   </div>
 </script>
 
@@ -217,6 +217,18 @@
         },
         label: function() {
             return this.name;
+        },
+        oneditprepare: function() {
+          var timei;
+          for (var i = 1; i <= 10; i++) {
+            timei = "time"+i;
+            if (this[timei] === "24:00") {
+              // Since 24:00 is not supported by the 'time' input field, we will convert it to 23:59 into 
+              // both the Javascript object and into the 'time' input field on the screen.
+              this[timei] = "23:59";
+              $("#node-config-input-time"+i).val("23:59");
+            }
+          }
         }
     });
 </script>
