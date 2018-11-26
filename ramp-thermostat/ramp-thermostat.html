@@ -226,8 +226,8 @@
                         first = false;
                         parts = getValue(this, 'time' + i).split(':');
                         var previousMinutes = 60 * parseInt(parts[0]) + parseInt(parts[1]);
-                        // Invalid time: when current time is before (or equals) the previous non-empty time
-                        if (minutes <= previousMinutes) {
+                        // Invalid time: when current time is before the previous non-empty time
+                        if (minutes < previousMinutes) {
                             return false;
                         }
                         break;
