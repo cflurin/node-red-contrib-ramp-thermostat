@@ -188,32 +188,118 @@
 </script>
 
 <script type="text/javascript">
-    var time_re = /(^$)|(^(?:[01]\d|2[0-4]):[0-5]\d$)/;
-    var temp_re = /^[+-]?\d*\.?\d+$|^$/;
+    var time_re = new RegExp(/(^$)|(^(?:[01]\d|2[0-4]):[0-5]\d$)/);
+    var temp_re = new RegExp(/^[+-]?\d*\.?\d+$|^$/);
+    
+    function getValue(node, property) {
+        var field = $('#node-config-input-' + property)[0];
+    
+        // When the config screen is open, we need to get the values from the screen.
+        // When the config screen is closed, we need to get the values from 'this' Javascript object.
+        if (field) {
+            return field.value;
+        }
+        else {
+            return node[property];
+        }
+    }
+    
+    function validateSetPoints(property, value) {
+        // The index is after the first 4 characters ('time' or 'temp')
+        var index = parseInt(property.substring(4));
+
+        if (value) {
+             if (property.startsWith("time")) {
+                // Invalid time: when time pattern invalid
+                if (!time_re.test(value)) {
+                    return false;
+                }
+                
+                var parts = value.split(':');
+                var minutes = 60 * parseInt(parts[0]) + parseInt(parts[1]);
+                var first = true;
+                var last = true;
+                
+                // Search backwards (from the current pair to pair 1) for non-empty times
+                for (var i = index - 1; i > 0; i--) {
+                    if (getValue(this, 'time' + i)) {
+                        first = false;
+                        parts = getValue(this, 'time' + i).split(':');
+                        var previousMinutes = 60 * parseInt(parts[0]) + parseInt(parts[1]);
+                        // Invalid time: when current time is before the previous non-empty time
+                        if (minutes < previousMinutes) {
+                            return false;
+                        }
+                        break;
+                    }
+                }
+                
+                // Invalid time: when first non-empty time pattern not equals 00:00
+                if (first && value != "00:00") {
+                    return false;
+                }
+                
+                // Search forward (from the current pair to pair 10) for non-empty times
+                for (var j = index + 1; j <= 10; j++) {
+                    if (getValue(this, 'time' + j)) {
+                        last = false;
+                        break;
+                    }
+                }
+                
+                if (last && value != "23:59") {
+                    return false;
+                }
+            }
+            else {
+                // Invalid temperature: when temperature pattern invalid
+                if (!temp_re.test(value)) {
+                    return false;
+                }
+            }
+        }
+        else {
+            if (property.startsWith("time")) {
+                // Invalid time: when time empty but temperature not empty
+                if (getValue(this, 'temp' + index)) {
+                    return false;
+                }
+            }
+            else {
+                // Invalid temperature: when temperature empty but time not empty
+                if (getValue(this, 'time' + index)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+    
     RED.nodes.registerType('profile',{
         category: 'config',
         defaults: {
-            name: {value:'',required:true},
-            time1: {value:'', validate:RED.validators.regex(time_re)},
-            temp1: {value:'', validate:RED.validators.regex(temp_re)},
-            time2: {value:'', validate:RED.validators.regex(time_re)},
-            temp2: {value:'', validate:RED.validators.regex(temp_re)},
-            time3: {value:'', validate:RED.validators.regex(time_re)},
-            temp3: {value:'', validate:RED.validators.regex(temp_re)},
-            time4: {value:'', validate:RED.validators.regex(time_re)},
-            temp4: {value:'', validate:RED.validators.regex(temp_re)},
-            time5: {value:'', validate:RED.validators.regex(time_re)},
-            temp5: {value:'', validate:RED.validators.regex(temp_re)},
-            time6: {value:'', validate:RED.validators.regex(time_re)},
-            temp6: {value:'', validate:RED.validators.regex(temp_re)},
-            time7: {value:'', validate:RED.validators.regex(time_re)},
-            temp7: {value:'', validate:RED.validators.regex(temp_re)},
-            time8: {value:'', validate:RED.validators.regex(time_re)},
-            temp8: {value:'', validate:RED.validators.regex(temp_re)},
-            time9: {value:'', validate:RED.validators.regex(time_re)},
-            temp9: {value:'', validate:RED.validators.regex(temp_re)},
-            time10: {value:'', validate:RED.validators.regex(time_re)},
-            temp10: {value:'', validate:RED.validators.regex(temp_re)},
+            name:   {value:'', required:true},
+            time1:  {value:'', validate:function(v) { return validateSetPoints.call(this,"time1" ,v) }},
+            temp1:  {value:'', validate:function(v) { return validateSetPoints.call(this,"temp1" ,v) }},
+            time2:  {value:'', validate:function(v) { return validateSetPoints.call(this,"time2" ,v) }},
+            temp2:  {value:'', validate:function(v) { return validateSetPoints.call(this,"temp2" ,v) }},
+            time3:  {value:'', validate:function(v) { return validateSetPoints.call(this,"time3" ,v) }},
+            temp3:  {value:'', validate:function(v) { return validateSetPoints.call(this,"temp3" ,v) }},
+            time4:  {value:'', validate:function(v) { return validateSetPoints.call(this,"time4" ,v) }},
+            temp4:  {value:'', validate:function(v) { return validateSetPoints.call(this,"temp4" ,v) }},
+            time5:  {value:'', validate:function(v) { return validateSetPoints.call(this,"time5" ,v) }},
+            temp5:  {value:'', validate:function(v) { return validateSetPoints.call(this,"temp5" ,v) }},
+            time6:  {value:'', validate:function(v) { return validateSetPoints.call(this,"time6" ,v) }},
+            temp6:  {value:'', validate:function(v) { return validateSetPoints.call(this,"temp6" ,v) }},
+            time7:  {value:'', validate:function(v) { return validateSetPoints.call(this,"time7" ,v) }},
+            temp7:  {value:'', validate:function(v) { return validateSetPoints.call(this,"temp7" ,v) }},
+            time8:  {value:'', validate:function(v) { return validateSetPoints.call(this,"time8" ,v) }},
+            temp8:  {value:'', validate:function(v) { return validateSetPoints.call(this,"temp8" ,v) }},
+            time9:  {value:'', validate:function(v) { return validateSetPoints.call(this,"time9" ,v) }},
+            temp9:  {value:'', validate:function(v) { return validateSetPoints.call(this,"temp9" ,v) }},
+            time10: {value:'', validate:function(v) { return validateSetPoints.call(this,"time10",v) }},
+            temp10: {value:'', validate:function(v) { return validateSetPoints.call(this,"temp10",v) }},
         },
         label: function() {
             return this.name;
