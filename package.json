@@ -1,7 +1,7 @@
 {
     "name"         : "node-red-contrib-ramp-thermostat",
-    "version"      : "0.6.0",
-    "description"  : "A Node-RED node that emulates a thermostat",
+    "version"      : "0.7.0",
+    "description"  : "A Node-RED node that emulates a programmable thermostat.",
     "dependencies": {
     },
     "keywords": [ 
