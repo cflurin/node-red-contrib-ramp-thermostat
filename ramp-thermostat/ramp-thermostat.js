@@ -16,6 +16,7 @@ module.exports = function(RED) {
     
     //this.warn(node_name+" - "+JSON.stringify(this));
     
+    this.context = this.context();
     var node_name;
     if (typeof this.name !== "undefined" ) {
       node_name = this.name.replace(/\s/g, "_");
@@ -179,7 +180,7 @@ module.exports = function(RED) {
     var state;
     var status = {};
     
-    current = parseFloat((current).toFixed(1));
+    current = parseFloat((current).toFixed(2));
     
     var date = new Date();
     var current_mins = date.getHours()*60 + date.getMinutes();
@@ -210,29 +211,35 @@ module.exports = function(RED) {
       return {"state": null};
     }
     
-    var target_plus = parseFloat((target + this.h_plus).toFixed(1));
-    var target_minus = parseFloat((target - this.h_minus).toFixed(1));
+    var target_plus = parseFloat((target + this.h_plus).toFixed(2));
+    var target_minus = parseFloat((target - this.h_minus).toFixed(2));
     
     //this.warn(target_minus+" - "+target+" - "+target_plus);
         
     if (current > target_plus) {
       state = false;
       status = {fill:"grey",shape:"ring",text:current+" > "+target_plus+" ("+profile.name+")"};
+    } else if (current == target_plus) {
+      state = false;
+      status = {fill:"grey",shape:"ring",text:current+" = "+target_plus+" ("+profile.name+")"}; 
+    } else if (current == target_minus) {
+      state = true;
+      status = {fill:"yellow",shape:"dot",text:current+" = "+target_minus+" ("+profile.name+")"}; 
     } else if (current < target_minus) {
       state = true;
       status = {fill:"yellow",shape:"dot",text:current+" < "+target_minus+" ("+profile.name+")"};    
-    } else if (current == target_plus) {
-      state = null;
-      status = {fill:"grey",shape:"ring",text:current+" = "+target_plus+" ("+profile.name+")"}; 
-    } else if (current == target_minus) {
-      state = null;
-      status = {fill:"grey",shape:"ring",text:current+" = "+target_minus+" ("+profile.name+")"};  
-    } else {
-      state = null;
-      status = {fill:"grey",shape:"ring",text:target_minus+" < "+current+" < "+target_plus+" ("+profile.name+")"};    
+    } else { // deadband
+      state = this.context.get('pre_state') || false;
+      if (state) {
+        status = {fill:"yellow",shape:"dot",text:target_minus+" < "+current+" < "+target_plus+" ("+profile.name+")"};
+      } else {
+        status = {fill:"grey",shape:"ring",text:target_minus+" < "+current+" < "+target_plus+" ("+profile.name+")"};
+      }
     }
     
-    return {"state":state, "target":parseFloat(target.toFixed(1)), "status":status};
+    this.context.set('pre_state', state);
+    
+    return {"state":state, "target":parseFloat(target.toFixed(2)), "status":status};
   }
   
   function setTarget(target) {
