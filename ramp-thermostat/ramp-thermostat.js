@@ -16,7 +16,6 @@ module.exports = function(RED) {
     
     //this.warn(node_name+" - "+JSON.stringify(this));
     
-    this.context = this.context();
     var node_name;
     if (typeof this.name !== "undefined" ) {
       node_name = this.name.replace(/\s/g, "_");
@@ -179,6 +178,7 @@ module.exports = function(RED) {
     var point_mins, pre_mins, pre_target, point_target, target, gradient;
     var state;
     var status = {};
+    var context = this.context();
     
     current = parseFloat((current).toFixed(2));
     
@@ -229,7 +229,7 @@ module.exports = function(RED) {
       state = true;
       status = {fill:"yellow",shape:"dot",text:current+" < "+target_minus+" ("+profile.name+")"};    
     } else { // deadband
-      state = this.context.get('pre_state') || false;
+      state = context.get('pre_state') || false;
       if (state) {
         status = {fill:"yellow",shape:"dot",text:target_minus+" < "+current+" < "+target_plus+" ("+profile.name+")"};
       } else {
@@ -237,7 +237,7 @@ module.exports = function(RED) {
       }
     }
     
-    this.context.set('pre_state', state);
+    context.set('pre_state', state);
     
     return {"state":state, "target":parseFloat(target.toFixed(2)), "status":status};
   }
