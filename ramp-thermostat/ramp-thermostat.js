@@ -91,13 +91,18 @@ module.exports = function(RED) {
             }
             break;
           case "getprofile":
-            result = getProfile(msg.payload);
-            if (result.found) {
-              msg3.topic = "getProfile";
-              msg3.payload = result.profile;            
+            if (msg.payload === "actual") {
+              msg3.payload = reformateProfile(this.profile);
             } else {
-              this.warn(msg.payload+" not found");
+              result = getProfile(msg.payload);
+              if (result.found) {
+                msg3.payload = result.profile;        
+              } else {
+                this.warn(msg.payload+" not found");
+              }
             }
+            
+            msg3.topic = "getProfile";
             
             this.send([null, null, msg3]);
             this.current_status = result.status;
@@ -269,7 +274,6 @@ module.exports = function(RED) {
     var found = false;
     var status = {};
     var profile = {};
-    var result = {};
     
     RED.nodes.eachNode(function(n) {
       if (n.type === "profile" && n.name === input) {
@@ -298,6 +302,30 @@ module.exports = function(RED) {
     return {"profile":profile, "status":status, "found":found};
   }
   
+  function reformateProfile(n) {
+    var profile = {};
+    var hhmm;
+ 
+    //console.log(JSON.stringify(n, null, 2));      
+    profile.name = n.name;
+    profile.points = [];
+    for (var k in n.points) {
+      var point = {};
+      hhmm = pad(parseInt(n.points[k].m / 60)) + ":" + pad(n.points[k].m % 60);
+      point[hhmm] = parseFloat(n.points[k].t);
+      profile.points.push(point);
+    }
+    //console.log(JSON.stringify(profile, null, 2));
+    return profile;
+  }
+  
+  function pad(number) {
+    if (number < 10) {
+      return '0' + number;
+    }
+    return number;
+  }
+    
   function setProfile(input) {
     var found = false;
     var status = {};
@@ -339,12 +367,25 @@ module.exports = function(RED) {
         var arr, minutes;
         var i = 1;
         
-        for (var k in input.points) {
-          arr = k.split(":");
-          minutes = parseInt(arr[0])*60 + parseInt(arr[1]);
-          points[i] = JSON.parse('{"m":' + minutes + ',"t":' + input.points[k] + '}');
-          //points[minutes] = input.points[k];
-          i++;
+        // array of point objects {"hh:mm": temp}
+        if (Array.isArray(input.points)) {
+          input.points.forEach(function(point) {
+            var k = Object.keys(point);
+            //console.log(k);
+            arr = k[0].split(":");
+            minutes = parseInt(arr[0])*60 + parseInt(arr[1]);
+            points[i] = JSON.parse('{"m":' + minutes + ',"t":' + Object.values(point) + '}');
+            i++;
+          });
+        } else {
+          // backwards copatibility
+          for (var k in input.points) {
+            arr = k.split(":");
+            minutes = parseInt(arr[0])*60 + parseInt(arr[1]);
+            points[i] = JSON.parse('{"m":' + minutes + ',"t":' + input.points[k] + '}');
+            //points[minutes] = input.points[k];
+            i++;
+          }
         }
         profile.points = points;
         found = true;
