@@ -374,11 +374,11 @@ module.exports = function(RED) {
             //console.log(k);
             arr = k[0].split(":");
             minutes = parseInt(arr[0])*60 + parseInt(arr[1]);
-            points[i] = JSON.parse('{"m":' + minutes + ',"t":' + Object.values(point) + '}');
+            points[i] = JSON.parse('{"m":' + minutes + ',"t":' + point[k] + '}');
             i++;
           });
         } else {
-          // backwards copatibility
+          // backwards compatibility
           for (var k in input.points) {
             arr = k.split(":");
             minutes = parseInt(arr[0])*60 + parseInt(arr[1]);
