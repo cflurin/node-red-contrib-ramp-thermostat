@@ -102,7 +102,7 @@ msg.payload: profile-name
 
 The profile-name is one of the existing profiles that are configured in the ramp-thermostat node.
 
-You can even define an input profile (JSON) with more than 10 points:
+You can even define an input profile (JSON object) with more than 10 points:
 
 ```sh
 msg.topic: setProfile
