@@ -56,8 +56,10 @@ module.exports = function(RED) {
       //this.warn(JSON.stringify(msg));
       
       if (typeof msg.payload === "undefined") {
-        this.warn("msg.payload undefined"); 
-      } else { 
+        this.warn("msg.payload undefined");
+      } else if (typeof msg.topic === "undefined") {
+        this.warn("msg.topic undefined");
+      } else {
         switch (msg.topic.toLowerCase()) {
           case "setcurrent":
           case "":
