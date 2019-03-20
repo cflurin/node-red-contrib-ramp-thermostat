@@ -282,7 +282,7 @@ module.exports = function(RED) {
         profile.name = n.name;
         profile.points = [];
         var timei, tempi;
-        for (var i=1; i<=20; i++) {
+        for (var i=1; i<=40; i++) {
           timei = "time"+i;
           tempi = "temp"+i;
           var point = {};
