@@ -26,7 +26,7 @@ module.exports = function(RED) {
     this.current_status = {};
     this.points_result = {};
     
-    this.h_plus = Math.abs(parseFloat(config.hysteresisplus)) || 0;
+    this.h_plus = Math.abs(parseFloat(config.hysteresisplus)) || 0;
     this.h_minus = Math.abs(parseFloat(config.hysteresisminus)) || 0;
     
     this.profile = RED.nodes.getNode(config.profile);
@@ -282,7 +282,7 @@ module.exports = function(RED) {
         profile.name = n.name;
         profile.points = [];
         var timei, tempi;
-        for (var i=1; i<=10; i++) {
+        for (var i=1; i<=20; i++) {
           timei = "time"+i;
           tempi = "temp"+i;
           var point = {};
@@ -322,7 +322,7 @@ module.exports = function(RED) {
   }
   
   function pad(number) {
-    if (number < 10) {
+    if (number < 40) {
       return '0' + number;
     }
     return number;
@@ -447,7 +447,7 @@ module.exports = function(RED) {
     
     var points_str = '{';
     
-    for (var i=1; i<=10; i++) {
+    for (var i=1; i<=40; i++) {
       timei = "time"+i;
       tempi = "temp"+i;
       
