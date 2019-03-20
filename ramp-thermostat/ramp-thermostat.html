@@ -357,11 +357,6 @@
     
     function validateSetPoints(property, value) {
         // The index is after the first 4 characters ('time' or 'temp')
-		if(property === null || value === null || property === undefined || value === undefined) {
-			console.log("null");
-			console.log(property);
-			console.log(value);
-		}
         var index = parseInt(property.substring(4));
 
         if (value) {
