@@ -95,6 +95,7 @@ module.exports = function(RED) {
           case "getprofile":
             if (msg.payload === "actual") {
               msg3.payload = reformateProfile(this.profile);
+              result.status = {fill:"green",shape:"dot",text:"get profile "+msg3.payload.name};
             } else {
               result = getProfile(msg.payload);
               if (result.found) {
