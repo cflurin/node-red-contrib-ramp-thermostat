@@ -77,7 +77,7 @@ module.exports = function(RED) {
                 msg1 = null;
               }
               msg2.payload = msg.payload;
-              msg2.profile = this.profile;
+              msg2.profile = this.profile.name;
               msg3.payload = result.target;
               this.send([msg1, msg2, msg3]);
               this.current_status = result.status;
